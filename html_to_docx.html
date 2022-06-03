@@ -30,7 +30,8 @@
             <td><textarea name="alamat" id="i_alamat"></textarea></td>
         </tr>
     </table>
-    <button onclick="simpan('exportContent');">Export as .doc</button>
+    <button onclick="simpan();">Preview</button>
+    <button onclick="ExportToDoc('exportContent')">Download docx</button>
     <div id="exportContent">
         <h1>
             <center>Formulir</center>
@@ -45,12 +46,11 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js "></script>
 <script>
-    function simpan(element, filename = '') {
+    function simpan() {
         $("#nama").html($("#i_nama").val());
         $("#jenis_kelamin").html($("#i_jenis_kelamin").val());
         $("#usia").html($("#i_usia").val());
         $("#alamat").html($("#i_alamat").val());
-        ExportToDoc(element, filename);
     }
     function ExportToDoc(element, filename = ''){
         var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
