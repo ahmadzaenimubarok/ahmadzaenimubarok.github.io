@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <h2>Formulir</h2>
+    <table>
+        <tr>
+            <td>Nama</td>
+            <td>:</td>
+            <td><input type="text" id="i_nama" value=""></td>
+        </tr>
+        <tr>
+            <td>Jenis Kelamin</td>
+            <td>:</td>
+            <td><select name="i_jenis_kelamin" id="i_jenis_kelamin">
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>Usia</td>
+            <td>:</td>
+            <td><input type="number" id="i_usia" value=""></td>
+        </tr>
+        <tr>
+            <td>Alamat</td>
+            <td>:</td>
+            <td><textarea name="alamat" id="i_alamat"></textarea></td>
+        </tr>
+    </table>
+    <button onclick="simpan('exportContent');">Export as .doc</button>
+    <div id="exportContent">
+        <h1>
+            <center>Formulir</center>
+        </h1>
+        <p>Nama : <span id="nama"></span></p>
+        <p>Jenis Kelamin : <span id="jenis_kelamin"></span></p>
+        <p>Usia : <span id="usia"></span></p>
+        <p>Alamat : <span id="alamat"></span></p>
+    <div>    
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js "></script>
+<script>
+    function simpan(element, filename = '') {
+        $("#nama").html($("#i_nama").val());
+        $("#jenis_kelamin").html($("#i_jenis_kelamin").val());
+        $("#usia").html($("#i_usia").val());
+        $("#alamat").html($("#i_alamat").val());
+        ExportToDoc(element, filename);
+    }
+    function ExportToDoc(element, filename = ''){
+        var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
+        
+        var footer = "</body></html>";
+        
+        var html = header+document.getElementById(element).innerHTML+footer;
+        
+        var blob = new Blob(['\ufeff', html], {
+            type: 'application/msword'
+        });
+        
+        // Specify link url
+        var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+        
+        // Specify file name
+        filename = filename?filename+'.docx':'document.docx';
+        
+        // Create download link element
+        var downloadLink = document.createElement("a");
+        
+        document.body.appendChild(downloadLink);
+        
+        if(navigator.msSaveOrOpenBlob ){
+            navigator.msSaveOrOpenBlob(blob, filename);
+        }else{
+            // Create a link to the file
+            downloadLink.href = url;
+            
+            // Setting the file name
+            downloadLink.download = filename;
+            
+            //triggering the function
+            downloadLink.click();
+        }
+        
+        document.body.removeChild(downloadLink);
+    }
+</script>
