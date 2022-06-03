@@ -1,3 +1,11 @@
+<style>
+    .d-none {
+        display: none;
+    }
+    .header {
+        text-align: center;
+    }
+</style>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,34 +20,60 @@
             <td><input type="text" id="i_nama" value=""></td>
         </tr>
         <tr>
-            <td>Jenis Kelamin</td>
+            <td>NIM</td>
             <td>:</td>
-            <td><select name="i_jenis_kelamin" id="i_jenis_kelamin">
-                <option value="Laki-laki">Laki-laki</option>
-                <option value="Perempuan">Perempuan</option>
+            <td><input type="text" id="i_nim"></td>
+        </tr>
+        <tr>
+            <td>Program Studi</td>
+            <td>:</td>
+            <td><select name="i_program_studi" id="i_program_studi">
+                <option value="Perbankan Syariah">Perbankan Syariah</option>
+                <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
+                <option value="Pendidikan Bahasa Arab ">Pendidikan Bahasa Arab </option>
             </select></td>
         </tr>
         <tr>
-            <td>Usia</td>
+            <td>Judul</td>
             <td>:</td>
-            <td><input type="number" id="i_usia" value=""></td>
-        </tr>
-        <tr>
-            <td>Alamat</td>
-            <td>:</td>
-            <td><textarea name="alamat" id="i_alamat"></textarea></td>
+            <td><textarea name="i_judul" id="i_judul"></textarea></td>
         </tr>
     </table>
     <button onclick="simpan();">Preview</button>
     <button onclick="ExportToDoc('exportContent')">Download docx</button>
-    <div id="exportContent">
-        <h1>
-            <center>Formulir</center>
-        </h1>
-        <p>Nama : <span id="nama"></span></p>
-        <p>Jenis Kelamin : <span id="jenis_kelamin"></span></p>
-        <p>Usia : <span id="usia"></span></p>
-        <p>Alamat : <span id="alamat"></span></p>
+    <div id="exportContent" class="d-none">
+        <div class="header">
+            <h1 style="text-align: center; font-size: 25px">KEMENTERIAN AGAMA REPUBLIK INDONESIA</h1>
+            <span style="text-align: center; font-size: 15px">Institut Agama Islam Negeri (IAIN)</span><br>
+            <span style="text-align: center; font-size: 15px">Syaikh Abdurrahman Siddik Bangka Belitung</span><br>
+            <span style="text-align: center; font-size: 15px">Fakultas Syariah dan Ekonomi Islam</span><br>
+            <span style="text-align: center; font-size: 15px">Jl. Raya Petaling KM 13, Petaling, Kec. Mendo Barat, Kab. Bangka, Prov. Kep. Babel, 33173</span><br>
+        </div>
+        <hr>
+        <h2 style="font-size: 23px; text-align: center">PENGAJUAN BORANG SKRIPSI</h2>
+
+        <table>
+            <tr>
+                <td>Nama</td>
+                <td>:</td>
+                <td><span id="nama"></span></td>
+            </tr>
+            <tr>
+                <td>NIM</td>
+                <td>:</td>
+                <td><span id="nim"></span></td>
+            </tr>
+            <tr>
+                <td>Program Studi</td>
+                <td>:</td>
+                <td><span id="program_studi"></span></td>
+            </tr>
+            <tr>
+                <td>Judul</td>
+                <td>:</td>
+                <td><span id="judul"></span></td>
+            </tr>
+        </table>
     <div>    
 </body>
 </html>
@@ -48,9 +82,10 @@
 <script>
     function simpan() {
         $("#nama").html($("#i_nama").val());
-        $("#jenis_kelamin").html($("#i_jenis_kelamin").val());
-        $("#usia").html($("#i_usia").val());
-        $("#alamat").html($("#i_alamat").val());
+        $("#nim").html($("#i_nim").val());
+        $("#program_studi").html($("#i_program_studi").val());
+        $("#judul").html($("#i_judul").val());
+        $("#exportContent").removeClass("d-none");
     }
     function ExportToDoc(element, filename = ''){
         var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
