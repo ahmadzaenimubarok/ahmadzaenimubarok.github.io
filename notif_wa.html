@@ -8,18 +8,22 @@
 </head>
 <body>
     <div>
+        <textarea name="text" id="text" cols="30" rows="10"></textarea>
         <input type="text" name="no_wa" id="no_wa" placeholder="masukkan nomor wa penerima">
         <button onclick="send_wa();">Kirim</button>
     </div>
     <div>
-            &#128683; AWAS! DISKON 99% BIKIN GAGAL FOKUS! &#128683;
+        <!-- <img src="https://aa43000.github.io/assets/image/promo_tokopedia.jpg" alt=""> -->
+        &#128683; AWAS! DISKON 99% BIKIN GAGAL FOKUS! &#128683;<br><br>Cek promonya di Tokopedia Tekno Supersaledari tanggal 1-7 Juni 2022! Ada lebih dari 200 brand elektronik pilihan yang ikutan *Flash Sale Diskon s.d. 99%, Harga Spesial Serba 6* Hingga *Cashback s.d Rp1jt* dan masih banyak promo lainnya menanti!
+
     </div>
-    <img src="https://aa43000.github.io/assets/image/promo_tokopedia.jpg" alt="">
 </body>
 </html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js "></script>
 <script>
     function send_wa() {
-        window.open("https://wa.me/+6281328331831?text=https://aa43000.github.io/assets/image/promo_tokopedia.jpg");
+        var text = $("#text").val();
+        var txt = encodeURI(text);
+        window.open("https://wa.me/+6281328331831?text="+txt);
     }
 </script>
