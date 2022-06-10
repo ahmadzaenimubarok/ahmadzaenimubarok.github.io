@@ -8,13 +8,24 @@
 </head>
 <body>
     <div>
-        <textarea name="text" id="text" cols="30" rows="10"></textarea>
-        <input type="text" name="no_wa" id="no_wa" placeholder="masukkan nomor wa penerima">
-        <button onclick="send_wa();">Kirim</button>
+        <table>
+            <tr>
+                <td>text</td>
+                <td><textarea name="text" id="text" cols="30" rows="10"></textarea></td>
+            </tr>
+            <tr>
+                <td>No Wa</td>
+                <td><input type="text" name="no_wa" id="no_wa" placeholder="masukkan nomor wa penerima"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button onclick="send_wa();">Kirim</button></td>
+            </tr>
+        </table>
     </div>
     <div>
         <!-- <img src="https://aa43000.github.io/assets/image/promo_tokopedia.jpg" alt=""> -->
-        &#128683; AWAS! DISKON 99% BIKIN GAGAL FOKUS! &#128683;<br><br>Cek promonya di Tokopedia Tekno Supersaledari tanggal 1-7 Juni 2022! Ada lebih dari 200 brand elektronik pilihan yang ikutan *Flash Sale Diskon s.d. 99%, Harga Spesial Serba 6* Hingga *Cashback s.d Rp1jt* dan masih banyak promo lainnya menanti!
+        <!-- &#128683; AWAS! DISKON 99% BIKIN GAGAL FOKUS! &#128683;<br><br>Cek promonya di Tokopedia Tekno Supersaledari tanggal 1-7 Juni 2022! Ada lebih dari 200 brand elektronik pilihan yang ikutan *Flash Sale Diskon s.d. 99%, Harga Spesial Serba 6* Hingga *Cashback s.d Rp1jt* dan masih banyak promo lainnya menanti! -->
 
     </div>
 </body>
@@ -23,7 +34,11 @@
 <script>
     function send_wa() {
         var text = $("#text").val();
+        var no_wa = $("#no_wa").val();
+        if(no_wa[0] == 0) {
+            no_wa = "62"+no_wa.substring(1);
+        }
         var txt = encodeURI(text);
-        window.open("https://wa.me/+6281328331831?text="+txt);
+        window.open("https://wa.me/"+no_wa+"?text="+txt);
     }
 </script>
