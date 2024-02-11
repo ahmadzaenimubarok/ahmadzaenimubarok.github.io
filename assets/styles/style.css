@@ -31,3 +31,8 @@ nav a:hover {
 .profile header {
   text-align: center;
 }
+
+.featured-images {
+  width: 100%;
+  max-width: 300px;
+}
