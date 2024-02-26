@@ -1,0 +1,485 @@
+@font-face {
+    font-family: 'comic sans';
+    src: url('./font/Comic Sans MS Bold/Comic Sans MS Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'comic sans';
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 9;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background-color: #183059;
+    color: #fff;
+}
+
+.nav-links a {
+    color: #fff;
+}
+
+.logo {
+    font-size: 32px;
+}
+
+.menu {
+    display: flex;
+    gap: 1em;
+    font-size: 18px;
+}
+
+.menu li:hover {
+    background-color: #3b5998;
+    border-radius: 5px;
+    transition: 0.3s ease;
+}
+
+.menu li {
+    padding: 5px 14px;
+}
+
+input[type=checkbox] {
+    display: none;
+}
+
+.hamburger {
+    display: none;
+    font-size: 24px;
+    user-select: none;
+}
+
+/* DROPDOWN MENU */
+.kontens {
+    position: relative; 
+}
+
+.dropdown {
+    background-color: #183059;
+    padding: 1em 0;
+    position: absolute; /*WITH RESPECT TO PARENT*/
+    display: none;
+    border-radius: 8px;
+    top: 35px;
+}
+
+.dropdown li + li {
+    margin-top: 10px;
+}
+
+.dropdown li {
+    padding: 0.5em 1em;
+    width: 8em;
+    text-align: center;
+}
+
+.dropdown li:hover {
+    background-color: #3b5998;
+}
+
+.kontens:hover .dropdown {
+    display: block;
+}
+
+main {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: 2rem 4rem;
+}
+
+main .content {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+}
+
+main .content .content-description {
+    flex: 1 1;
+}
+
+main .content .content-description .title {
+    margin-block-end: 1rem;
+
+    font-size: 3.5rem;
+}
+
+main .content .content-description p {
+    font-size: 1.2rem;
+    line-height: 1.7rem;
+}
+
+main .content .content-description button {
+    padding: 0.5rem 2.5rem;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    margin-block-start: 1rem;
+
+    background-color: #2d3e50;
+
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s ease-in;
+}
+
+main .content .content-description button:hover {
+    border: 3px solid #2d3e50;
+    background-color: transparent;
+    color: #2d3e50;
+}
+main .content .content-image {
+    flex: 1;
+    display: flex;
+}
+main .content .content-image img {
+    width: 300px;
+    min-width: 250px;
+    margin: auto;
+}
+
+main .content .content-image {
+    flex: 1;
+   
+    display: flex;
+}
+
+main .content .content-image img {
+    width: 300px;
+    min-width: 250px;
+    margin: auto;
+}
+
+.countdown-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.countdown-item {
+    text-align: center;
+    margin: 0 10px;
+}
+
+.countdown-item span {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+.colon {
+    font-size: 24px;
+    margin: 0 5px;
+}
+.konten {
+    margin-top: 50px;
+    text-align: center;
+}
+.konten h1 {
+    font-size: 2.5rem;
+}
+
+#konten_doa .content {
+    margin-top: 10px;
+}
+
+.content .article-doa {
+    flex: 1 1;
+
+    align-self: baseline;
+    padding: 15px;
+}
+
+.content .article-doa:last-child {
+    border-left: 2px solid black;
+}
+
+.text-right {
+    text-align: right;
+}
+.teks-arab {
+    background: rgb(255, 255, 255);
+    border: 0px; 
+    clear: both; 
+    font-family: 'scheherazade' , 'traditional arabic'; 
+    font-size: 25px; 
+    line-height: 1.5em; 
+    margin: 0px 0px 20px; 
+    padding: 0px; 
+    text-align: right; 
+    vertical-align: baseline;
+}
+
+#konten_keistimewaan {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+#konten_keistimewaan .card img {
+    width: 30%;
+}
+
+#konten_keistimewaan .card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+#konten_keistimewaan .card p {
+    color: #666;
+}
+
+#konten_keistimewaan .card-container {
+    display: flex;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+#konten_keistimewaan .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    min-width: 100%;
+    transition: transform 0.5s ease;
+}
+
+@keyframes slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+#konten_sunnah .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+#konten_sunnah .card {
+    width: calc(20% - 10px);
+    height: 300px;
+    perspective: 1000px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#konten_sunnah .card-front,
+#konten_sunnah .card-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
+    transition: transform 0.5s;
+    border-radius: 10px;
+}
+
+#konten_sunnah  .card-front {
+    background-color: #3498db;
+}
+
+#konten_sunnah .card-back {
+    background-color: #2ecc71;
+    transform: rotateY(180deg);
+    overflow: auto;
+}
+
+#konten_sunnah .card img {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 20px;
+}
+
+#konten_sunnah .card h3, .card p {
+    padding: 10px;
+    color: #fff;
+}
+
+#konten_sunnah .card:hover .card-front {
+    transform: rotateY(-180deg);
+}
+
+#konten_sunnah .card:hover .card-back {
+    transform: rotateY(0deg);
+}
+
+aside {
+    width: 50%;
+    padding: 20px;
+    background-color: #f0f0f0;
+    margin: 0 auto;
+    margin-top: 20px;
+    justify-content: space-around;
+}
+
+aside article {
+    margin-bottom: 20px;
+    align-self: baseline;
+}
+
+aside article:first-child {
+    width: 60%;
+}
+
+aside article:last-child {
+    width: 30%;
+}
+
+aside header h2 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+aside section img {
+    width: 100%;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+aside section p {
+    margin-bottom: 5px;
+}
+
+aside section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+aside section ul li {
+    margin-bottom: 5px;
+}
+
+aside section ul li a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s;
+}
+
+aside section ul li a:hover {
+    color: #007bff;
+}
+
+footer {
+    background-color: #183059;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+footer p {
+    margin: 0;
+}
+
+@media(max-width:768px) {
+    .menu {
+        display: none;
+        position: absolute;
+        background-color: #183059;
+        right: 0;
+        left: 0;
+        text-align: center;
+        padding: 16px 0;
+    }
+
+    .menu li:hover {
+        display: inline-block;
+        background-color: #3b5998;
+        transition: 0.3s ease;
+    }
+
+    .menu li + li {
+        margin-top: 12px;
+    }
+
+    input[type=checkbox]:checked ~ .menu {
+        display: block;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .dropdown {
+        left: 50%;
+        top: 30px;
+        transform: translateX(35%);
+    }
+
+    .dropdown li:hover {
+        background-color: #4c9e9e;
+    }
+
+    main .content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    main .content .content-description .title {
+        font-size: 3rem;
+    }
+    main .content .content-description p {
+        font-size: 1rem;
+    }
+    main .content .content-image {
+        order: -1;
+    }
+
+    .content .article-doa:last-child {
+        border-left: none;
+    }
+
+    #konten_sunnah .card {
+        width: calc(45% - 5px);
+        height: 200px;
+        margin: 5px;
+    }
+    #konten_sunnah .card img {
+        width: 80%;
+    }
+
+    aside {
+        width: 100%;
+    }
+
+    aside article:first-child {
+        width: 100%;
+    }
+
+    aside article:last-child {
+        width: 100%;
+    }
+}
