@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tambahkan Tanda Air Teks ke Gambar</title>
+</head>
+<body>
+<h1>Tambahkan Tanda Air Teks ke Gambar</h1>
+<!-- Input untuk URL gambar -->
+<label for="gambarURL">URL Gambar:</label>
+<input type="text" id="gambarURL" value="https://aa43000.github.io/assets/image/promo_tokopedia.jpg">
+<br>
+<!-- Input untuk teks tanda air -->
+<label for="tandaAirTeks">Tanda Air Teks:</label>
+<input type="text" id="tandaAirTeks" value="Tanda Air">
+<br>
+<!-- Pilihan posisi tanda air -->
+<label for="posisi">Posisi Tanda Air:</label>
+<select id="posisi">
+  <option value="tengah">Di Tengah</option>
+  <option value="pinggir">Di Pinggir</option>
+</select>
+<br>
+<!-- Tombol untuk menambahkan tanda air -->
+<button onclick="tambahkanTandaAir()">Tambahkan Tanda Air</button>
+
+<!-- Script JavaScript -->
+<script>
+// Fungsi untuk menambahkan tanda air teks ke gambar
+function tambahkanTandaAir() {
+    var gambarURL = document.getElementById('gambarURL').value;
+    var tandaAirTeks = document.getElementById('tandaAirTeks').value;
+    var posisi = document.getElementById('posisi').value;
+
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var gambar = new Image();
+
+    gambar.crossOrigin = 'anonymous';
+    gambar.onload = function() {
+        canvas.width = gambar.width;
+        canvas.height = gambar.height;
+        ctx.drawImage(gambar, 0, 0);
+        ctx.font = '20px Arial'; // Ganti font dan ukuran sesuai kebutuhan
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // Warna teks dan opasitas
+        ctx.textAlign = 'center';
+
+        if (posisi === 'tengah') {
+            var x = canvas.width / 2;
+            var y = canvas.height / 2;
+        } else {
+            var margin = 10; // Jarak antara tanda air dan tepi gambar
+            var x = margin + ctx.measureText(tandaAirTeks).width / 2;
+            var y = margin + 20; // Tinggi teks
+        }
+
+        ctx.fillText(tandaAirTeks, x, y);
+
+        // Mengambil gambar hasil dengan tanda air
+        var hasilGambar = canvas.toDataURL('image/jpeg');
+
+        // Menampilkan gambar hasil di halaman
+        var hasilElemen = document.getElementById('hasilGambar');
+        hasilElemen.src = hasilGambar;
+    };
+
+    gambar.src = gambarURL;
+}
+</script>
+
+<!-- Elemen untuk menampilkan gambar hasil -->
+<h2>Gambar dengan Tanda Air</h2>
+<img id="hasilGambar" alt="Gambar dengan Tanda Air">
+</body>
+</html>
