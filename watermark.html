@@ -9,29 +9,70 @@
 <h1>Tambahkan Tanda Air Teks ke Gambar</h1>
 <!-- Input untuk URL gambar -->
 <label for="gambarURL">URL Gambar:</label>
-<input type="text" id="gambarURL" value="https://aa43000.github.io/assets/image/promo_tokopedia.jpg">
+<input type="text" id="gambarURL" value="https://th.bing.com/th/id/OIG2.gF0fsvaE7rNTrqGdn3pB?w=1024&h=1024&rs=1&pid=ImgDetMain">
 <br>
 <!-- Input untuk teks tanda air -->
 <label for="tandaAirTeks">Tanda Air Teks:</label>
 <input type="text" id="tandaAirTeks" value="Tanda Air">
 <br>
-<!-- Pilihan posisi tanda air -->
-<label for="posisi">Posisi Tanda Air:</label>
-<select id="posisi">
-  <option value="tengah">Di Tengah</option>
-  <option value="pinggir">Di Pinggir</option>
+<!-- Pilihan tipe tanda air -->
+<label for="tipe">Tipe Tanda Air:</label>
+<select id="tipe" onchange="ubahTipe()">
+  <option value="full">Full</option>
+  <option value="single">Single</option>
 </select>
+<br>
+<!-- Pilihan posisi tanda air (hanya ditampilkan saat tipe single dipilih) -->
+<div id="posisiContainer" style="display: none;">
+    <label for="posisi">Posisi Tanda Air:</label>
+    <select id="posisi">
+      <option value="tengah">Di Tengah</option>
+      <option value="kiri_atas">Kiri Atas</option>
+      <option value="kanan_atas">Kanan Atas</option>
+      <option value="kiri_bawah">Kiri Bawah</option>
+      <option value="kanan_bawah">Kanan Bawah</option>
+      <option value="kiri">Di Samping Kiri</option>
+      <option value="kanan">Di Samping Kanan</option>
+    </select>
+</div>
+<br>
+<!-- Input untuk ukuran font -->
+<label for="ukuranFont">Ukuran Font:</label>
+<input type="number" id="ukuranFont" value="20">
+<br>
+<!-- Input untuk jarak antar watermark (hanya ditampilkan saat tipe full dipilih) -->
+<div id="jarakContainer" style="display: block;">
+    <label for="jarakWatermark">Jarak Watermark:</label>
+    <input type="number" id="jarakWatermark" value="50">
+</div>
 <br>
 <!-- Tombol untuk menambahkan tanda air -->
 <button onclick="tambahkanTandaAir()">Tambahkan Tanda Air</button>
 
 <!-- Script JavaScript -->
 <script>
+// Fungsi untuk mengubah tipe tanda air
+function ubahTipe() {
+    var tipe = document.getElementById('tipe').value;
+    var posisiContainer = document.getElementById('posisiContainer');
+    var jarakContainer = document.getElementById('jarakContainer');
+
+    // Tampilkan atau sembunyikan pilihan posisi dan jarak tergantung dari tipe yang dipilih
+    if (tipe === 'single') {
+        posisiContainer.style.display = 'block';
+        jarakContainer.style.display = 'none';
+    } else {
+        posisiContainer.style.display = 'none';
+        jarakContainer.style.display = 'block';
+    }
+}
+
 // Fungsi untuk menambahkan tanda air teks ke gambar
 function tambahkanTandaAir() {
     var gambarURL = document.getElementById('gambarURL').value;
     var tandaAirTeks = document.getElementById('tandaAirTeks').value;
-    var posisi = document.getElementById('posisi').value;
+    var tipe = document.getElementById('tipe').value;
+    var ukuranFont = document.getElementById('ukuranFont').value;
 
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
@@ -42,20 +83,74 @@ function tambahkanTandaAir() {
         canvas.width = gambar.width;
         canvas.height = gambar.height;
         ctx.drawImage(gambar, 0, 0);
-        ctx.font = '20px Arial'; // Ganti font dan ukuran sesuai kebutuhan
+        ctx.font = ukuranFont + 'px Arial'; // Ukuran font disesuaikan
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // Warna teks dan opasitas
         ctx.textAlign = 'center';
 
-        if (posisi === 'tengah') {
-            var x = canvas.width / 2;
-            var y = canvas.height / 2;
-        } else {
-            var margin = 10; // Jarak antara tanda air dan tepi gambar
-            var x = margin + ctx.measureText(tandaAirTeks).width / 2;
-            var y = margin + 20; // Tinggi teks
-        }
+        if (tipe === 'full') {
+            var jarakWatermark = parseInt(document.getElementById('jarakWatermark').value);
+            var jarakY = parseInt(ukuranFont) + jarakWatermark; // Jarak vertikal antara setiap tanda air
+            var y = parseInt(ukuranFont);
 
-        ctx.fillText(tandaAirTeks, x, y);
+            while (y < canvas.height) {
+                var x = parseInt(ukuranFont); // Mulai dari jarak font
+                while (x < canvas.width) {
+                    ctx.fillText(tandaAirTeks, x, y);
+                    x += ctx.measureText(tandaAirTeks).width + jarakWatermark; // Menambahkan jarak antar watermark
+                }
+                y += jarakY; // Pindah ke baris berikutnya
+            }
+        } else if (tipe === 'single') {
+            var posisi = document.getElementById('posisi').value;
+
+            var x, y;
+
+            switch(posisi) {
+                case 'tengah':
+                    x = canvas.width / 2;
+                    y = canvas.height / 2;
+                    break;
+                case 'kiri_atas':
+                    x = 10;
+                    y = 30;
+                    ctx.textAlign = 'left';
+                    break;
+                case 'kanan_atas':
+                    x = canvas.width - 10;
+                    y = 30;
+                    ctx.textAlign = 'right';
+                    break;
+                case 'kiri_bawah':
+                    x = 10;
+                    y = canvas.height - 10;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'bottom';
+                    break;
+                case 'kanan_bawah':
+                    x = canvas.width - 10;
+                    y = canvas.height - 10;
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'bottom';
+                    break;
+                case 'kiri':
+                    x = 10;
+                    y = canvas.height / 2;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    break;
+                case 'kanan':
+                    x = canvas.width - 10;
+                    y = canvas.height / 2;
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'middle';
+                    break;
+                default:
+                    x = canvas.width / 2;
+                    y = canvas.height / 2;
+            }
+
+            ctx.fillText(tandaAirTeks, x, y);
+        }
 
         // Mengambil gambar hasil dengan tanda air
         var hasilGambar = canvas.toDataURL('image/jpeg');
@@ -65,7 +160,7 @@ function tambahkanTandaAir() {
         hasilElemen.src = hasilGambar;
     };
 
-    gambar.src = gambarURL;
+gambar.src = gambarURL;
 }
 </script>
 
