@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Terlindungi</title>
+    <style>
+        /* Gaya untuk overlay */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5); /* transparansi 50% */
+            z-index: 9999; /* Pastikan overlay di atas semua elemen lain */
+            display: none; /* Mulai tersembunyi */
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay"></div> <!-- Overlay untuk menutupi konten -->
+    <h1>Halaman Terlindungi</h1>
+    <p>Isi halaman Anda di sini...</p>
+
+    <script>
+        // Mencegah klik kanan
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            alert('Klik kanan tidak diizinkan di halaman ini!');
+        });
+
+        // Mencegah beberapa shortcut keyboard yang biasa digunakan untuk screenshot
+        document.addEventListener('keydown', function(event) {
+            console.log(event.code);
+            // Tombol-tombol yang akan dicegah (misalnya, Ctrl+S, Ctrl+Shift+I, dll.)
+            var forbiddenKeys = ['KeyS', 'KeyI']; // tambahkan tombol lain sesuai kebutuhan
+            if ((event.ctrlKey && forbiddenKeys.includes(event.code)) || (event.ctrlKey && event.shiftKey && event.code === 'KeyC') || (event.ctrlKey && event.shiftKey && event.code === 'KeyS')) {
+                event.preventDefault();
+                alert('Tindakan ini tidak diizinkan di halaman ini!');
+            }
+            // Jika tombol Print Screen atau kombinasi Windows + PrintScreen ditekan
+            if ((event.code === 'PrintScreen') || (event.key === 'PrintScreen') || (event.code === 'KeyP' && event.ctrlKey) || (event.code === 'KeyP' && event.metaKey)) {
+                event.preventDefault();
+                document.getElementById('overlay').style.display = 'block';
+                setTimeout(function() {
+                    document.getElementById('overlay').style.display = 'none';
+                }, 1000); // Tampilkan overlay selama 1 detik
+                alert('Tindakan ini tidak diizinkan di halaman ini!');
+            }
+        });
+
+    </script>
+</body>
+</html>
