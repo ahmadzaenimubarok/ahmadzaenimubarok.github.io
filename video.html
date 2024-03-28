@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tonton Video</title>
+</head>
+<body>
+    <h1>Tonton Video</h1>
+    <form id="videoForm">
+        <label for="websiteUrl">URL Website:</label><br>
+        <input type="text" id="websiteUrl" name="websiteUrl" required><br><br>
+        <input type="submit" value="Tampilkan Video">
+    </form>
+
+    <div id="videoContainer"></div>
+
+    <script>
+        document.getElementById('videoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var websiteUrl = document.getElementById('websiteUrl').value;
+            extractVideoFromWebsite(websiteUrl);
+        });
+
+        function extractVideoFromWebsite(websiteUrl) {
+            // Menggunakan teknik web scraping untuk mengambil video dari halaman web
+            // Perhatikan bahwa ini adalah pendekatan umum dan tidak selalu stabil
+
+            fetch(websiteUrl)
+                .then(response => response.text())
+                .then(html => {
+                    // Menemukan tag video di dalam konten halaman
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var videoElement = doc.querySelector('video');
+
+                    if (videoElement) {
+                        // Menemukan video, menampilkannya kepada pengguna
+                        var videoContainer = document.getElementById('videoContainer');
+                        videoContainer.innerHTML = ''; // Kosongkan kontainer sebelum menampilkan video baru
+                        videoContainer.appendChild(videoElement.cloneNode(true));
+                    } else {
+                        alert('Video tidak ditemukan pada halaman web tersebut.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengambil konten dari URL yang diberikan.');
+                });
+        }
+    </script>
+</body>
+</html>
