@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Pengaruh Manipulasi Hasil Acak</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .panel {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        .result-log {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .warning {
+            background-color: #ffcc00;
+            padding: 10px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .disclaimer {
+            background-color: #ffdddd;
+            padding: 10px;
+            font-size: 0.9em;
+            margin-top: 20px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Peringatan Edukasi -->
+    <div class="warning">
+        <p><strong>PERINGATAN:</strong> Ini adalah simulasi untuk edukasi. Hasil permainan ini sepenuhnya bersifat acak, dan tidak berhubungan dengan perjudian nyata. Kami ingin menunjukkan bagaimana manipulasi hasil acak dapat dilakukan dalam sistem yang tidak transparan, untuk memperingatkan risiko dalam praktik yang tidak adil.</p>
+    </div>
+
+    <h1>Simulasi Pengaruh Manipulasi Hasil Acak</h1>
+
+    <!-- Panel Bandar (Pengaturan Pengaruh Angka) -->
+    <div class="panel" id="bandarPanel">
+        <h2>Panel Pengaturan Hasil Acak</h2>
+        <p>Masukkan jumlah angka 5 yang akan muncul dalam 5 percobaan (0-5):</p>
+        <input type="number" id="fiveCount" min="0" max="5" value="2">
+        <p><strong>Catatan: Pengaturan ini hanya untuk menunjukkan bagaimana distribusi angka bisa dikendalikan dalam sistem acak.</strong></p>
+    </div>
+
+    <!-- Panel User -->
+    <div class="panel" id="userPanel">
+        <h2>Panel Simulasi Pengguna</h2>
+        <button id="spinButton">Lakukan Percobaan</button>
+        <button id="reloadButton">Reload</button>
+        <p><strong>Sisa Percobaan:</strong> <span id="remainingSpins">5</span></p>
+        <p><strong>Hasil Percobaan:</strong> <span id="spinResult">-</span></p>
+        <p><strong>Status:</strong> <span id="gameStatus">-</span></p>
+
+        <!-- Riwayat Hasil -->
+        <h3>Riwayat Percobaan:</h3>
+        <div class="result-log" id="resultLog"></div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Simulasi ini tidak mendukung atau mempromosikan aktivitas perjudian dalam bentuk apapun. Tujuan utama dari alat ini adalah untuk menunjukkan bagaimana manipulasi hasil dalam sistem acak dapat memengaruhi hasil yang diperoleh dan untuk mengedukasi tentang potensi risiko dalam praktik yang tidak transparan.</p>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            let remainingSpins = 5; // Total percobaan yang diperbolehkan
+            let fiveCount = 0; // Jumlah angka 5 yang harus dimasukkan
+            const maxSpins = 5; // Maksimal jumlah percobaan
+            const maxNumbersPerSpin = 4; // Angka per percobaan
+            const fiveDistribution = []; // Menyimpan distribusi angka 5 di semua percobaan
+
+            // Fungsi untuk memulai percobaan
+            function startGame() {
+                if (remainingSpins === maxSpins) {
+                    // Ambil pengaturan bandar hanya di awal permainan
+                    fiveCount = parseInt($('#fiveCount').val());
+                    if (isNaN(fiveCount) || fiveCount < 0 || fiveCount > 5) {
+                        alert('Masukkan jumlah angka 5 yang valid (0-5).');
+                        return;
+                    }
+
+                    // Distribusi angka 5 ke semua percobaan
+                    fiveDistribution.length = 0; // Reset distribusi
+                    for (let i = 0; i < fiveCount; i++) {
+                        fiveDistribution.push(5);
+                    }
+                    while (fiveDistribution.length < maxSpins * maxNumbersPerSpin) {
+                        fiveDistribution.push(Math.floor(Math.random() * 5)); // Angka 0-4
+                    }
+
+                    // Acak distribusi
+                    fiveDistribution.sort(() => Math.random() - 0.5);
+                }
+
+                if (remainingSpins <= 0) {
+                    alert('Simulasi selesai. Tidak ada percobaan tersisa.');
+                    return;
+                }
+
+                // Generate hasil percobaan dari distribusi angka
+                const spinStartIndex = (maxSpins - remainingSpins) * maxNumbersPerSpin;
+                const spinResult = fiveDistribution.slice(spinStartIndex, spinStartIndex + maxNumbersPerSpin);
+
+                // Hitung hasil berdasarkan jumlah angka 5
+                const fiveCountInSpin = spinResult.filter(num => num === 5).length;
+                let gameStatus = '';
+                let points = 0;
+
+                if (fiveCountInSpin > 0) {
+                    gameStatus = `Mendapatkan angka 5 sebanyak ${fiveCountInSpin} kali`;
+                    points = fiveCountInSpin; // Jumlah kemenangan berdasarkan angka 5 yang muncul
+                } else {
+                    gameStatus = 'Tidak mendapatkan angka 5';
+                }
+
+                // Update UI
+                $('#spinResult').text(spinResult.join(''));
+                $('#gameStatus').text(gameStatus);
+                $('#resultLog').append(
+                    `<p>Percobaan ke-${maxSpins - remainingSpins + 1}: 
+                        Hasil: <strong>${spinResult.join('')}</strong>, 
+                        Status: <strong>${gameStatus}</strong></p>`
+                );
+
+                remainingSpins--;
+                $('#remainingSpins').text(remainingSpins);
+
+                if (remainingSpins === 0) {
+                    alert('Simulasi selesai! Lihat riwayat percobaan untuk hasil lengkap.');
+                }
+            }
+
+            // Tombol Spin untuk memulai percobaan
+            $('#spinButton').click(function () {
+                startGame();
+            });
+
+            // Tombol Reload untuk me-reset data simulasi
+            $('#reloadButton').click(function () {
+                remainingSpins = 5; // Reset percobaan
+                $('#remainingSpins').text(remainingSpins);
+                $('#spinResult').text('-');
+                $('#gameStatus').text('-');
+                $('#resultLog').empty(); // Menghapus riwayat percobaan
+                $('#fiveCount').val(2); // Mengembalikan pengaturan bandar ke default
+                alert('Data telah di-reset. Anda bisa memulai simulasi baru.');
+            });
+        });
+    </script>
+</body>
+</html>
