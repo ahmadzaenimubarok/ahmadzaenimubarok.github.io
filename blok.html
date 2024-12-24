@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Image with Black</title>
+</head>
+<body>
+    <h1>Block Gambar dengan Warna Hitam</h1>
+    <input type="file" id="upload" accept="image/*">
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const upload = document.getElementById('upload');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        upload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+
+            img.onload = () => {
+                // Set ukuran canvas sesuai ukuran gambar
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // Menggambar gambar asli (opsional, jika ingin menghapus gambar sepenuhnya, ini bisa dilewatkan)
+                ctx.drawImage(img, 0, 0);
+
+                // Menutupi gambar dengan warna hitam penuh
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Menghapus URL sementara untuk gambar
+                URL.revokeObjectURL(img.src);
+            };
+        });
+    </script>
+</body>
+</html>
