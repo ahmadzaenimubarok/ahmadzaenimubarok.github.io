@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Block Image with Black</title>
+    <title>Image to Black Block</title>
 </head>
 <body>
-    <h1>Block Gambar dengan Warna Hitam</h1>
+    <h1>Blok Hitam Berdasarkan Bentuk Gambar</h1>
     <input type="file" id="upload" accept="image/*">
     <canvas id="canvas"></canvas>
 
@@ -27,14 +27,28 @@
                 canvas.width = img.width;
                 canvas.height = img.height;
 
-                // Menggambar gambar asli (opsional, jika ingin menghapus gambar sepenuhnya, ini bisa dilewatkan)
+                // Menggambar gambar asli ke canvas
                 ctx.drawImage(img, 0, 0);
 
-                // Menutupi gambar dengan warna hitam penuh
-                ctx.fillStyle = 'black';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Mendapatkan data piksel gambar
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
 
-                // Menghapus URL sementara untuk gambar
+                // Loop melalui semua piksel dan ubah menjadi hitam dengan transparansi dipertahankan
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const alpha = pixels[i + 3]; // Nilai transparansi
+                    if (alpha > 0) { 
+                        // Jika piksel tidak transparan, ubah menjadi hitam
+                        pixels[i] = 0;     // Red
+                        pixels[i + 1] = 0; // Green
+                        pixels[i + 2] = 0; // Blue
+                    }
+                }
+
+                // Menulis ulang data piksel ke canvas
+                ctx.putImageData(imageData, 0, 0);
+
+                // Menghapus URL sementara
                 URL.revokeObjectURL(img.src);
             };
         });
