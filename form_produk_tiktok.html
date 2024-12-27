@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Produk Tiktokshop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Form Tambah Produk</h1>
+
+        <form action="#" method="POST" enctype="multipart/form-data">
+            <!-- Judul Produk -->
+            <div class="mb-3">
+                <label for="judul" class="form-label">Judul Produk:</label>
+                <div id="judul-container">
+                    <div class="input-group mb-2">
+                        <input type="text" name="judul[]" class="form-control" placeholder="Judul 1">
+                        <button type="button" class="btn btn-outline-secondary" onclick="addInput('judul-container', 'judul[]', 'Judul')">Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deskripsi Produk -->
+            <div class="mb-3">
+                <label for="deskripsi" class="form-label">Deskripsi Produk:</label>
+                <div id="deskripsi-container">
+                    <div class="input-group mb-2">
+                        <textarea name="deskripsi[]" class="form-control" rows="3" placeholder="Deskripsi 1"></textarea>
+                        <button type="button" class="btn btn-outline-secondary" onclick="addInput('deskripsi-container', 'deskripsi[]', 'Deskripsi')">Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategori Produk -->
+            <div class="mb-3">
+                <label for="kategori" class="form-label">Kategori:</label>
+                <select name="kategori" id="kategori" class="form-select">
+                    <option value="">Pilih Kategori</option>
+                    <option value="kategori1">Kategori 1</option>
+                    <option value="kategori2">Kategori 2</option>
+                </select>
+            </div>
+
+            <!-- Berat Produk -->
+            <div class="mb-3">
+                <label for="berat" class="form-label">Berat (gram):</label>
+                <input type="number" name="berat" id="berat" class="form-control" placeholder="Contoh: 500">
+            </div>
+
+            <!-- Nomor BPOM -->
+            <div class="mb-3">
+                <label for="bpom" class="form-label">Nomor BPOM:</label>
+                <input type="text" name="bpom" id="bpom" class="form-control" placeholder="Nomor BPOM">
+            </div>
+
+            <!-- Form Opsional -->
+            <div class="mb-3">
+                <label for="opsional" class="form-label">Form Opsional:</label>
+                <div id="opsional-container">
+                    <div class="input-group mb-2">
+                        <input type="text" name="opsional_key[]" class="form-control me-2" placeholder="Nama Form">
+                        <input type="text" name="opsional_value[]" class="form-control me-2" placeholder="Value">
+                        <button type="button" class="btn btn-outline-secondary" onclick="addOptionalInput()">Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Gambar -->
+            <div class="mb-3">
+                <label for="gambar" class="form-label">Upload Gambar:</label>
+                <input type="file" name="gambar[]" id="gambar" class="form-control" multiple onchange="previewImages(event)">
+            </div>
+
+            <!-- Preview Gambar -->
+            <div id="preview-container" class="row mb-3"></div>
+
+            <!-- Tombol Submit -->
+            <button type="submit" class="btn btn-primary">Simpan Produk</button>
+        </form>
+    </div>
+
+    <script>
+        function addInput(containerId, name, placeholder) {
+            const container = document.getElementById(containerId);
+            const newInput = document.createElement('div');
+            newInput.classList.add('input-group', 'mb-2');
+
+            if (containerId === 'judul-container' || containerId === 'opsional-container') {
+                newInput.innerHTML = `
+                    <input type="text" name="${name}" class="form-control" placeholder="${placeholder} ${container.children.length + 1}">
+                    <button type="button" class="btn btn-outline-secondary" onclick="removeInput(this)">Hapus</button>
+                `;
+            } else if (containerId === 'deskripsi-container') {
+                newInput.innerHTML = `
+                    <textarea name="${name}" class="form-control" rows="3" placeholder="${placeholder} ${container.children.length + 1}"></textarea>
+                    <button type="button" class="btn btn-outline-secondary" onclick="removeInput(this)">Hapus</button>
+                `;
+            }
+
+            container.appendChild(newInput);
+        }
+
+        function addOptionalInput() {
+            const container = document.getElementById('opsional-container');
+            const newInput = document.createElement('div');
+            newInput.classList.add('input-group', 'mb-2');
+            newInput.innerHTML = `
+                <input type="text" name="opsional_key[]" class="form-control me-2" placeholder="Nama Form">
+                <input type="text" name="opsional_value[]" class="form-control me-2" placeholder="Value">
+                <button type="button" class="btn btn-outline-secondary" onclick="removeInput(this)">Hapus</button>
+            `;
+            container.appendChild(newInput);
+        }
+
+        function removeInput(button) {
+            const inputGroup = button.parentElement;
+            inputGroup.remove();
+        }
+
+        function previewImages(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = '';
+
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const col = document.createElement('div');
+                    col.classList.add('col-md-3', 'mb-2');
+                    col.innerHTML = `<img src="${e.target.result}" class="img-thumbnail" alt="Preview">`;
+                    previewContainer.appendChild(col);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
