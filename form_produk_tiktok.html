@@ -57,6 +57,12 @@
                 <input type="number" name="berat" id="berat" class="form-control" placeholder="Contoh: 500">
             </div>
 
+            <!-- Harga Produk -->
+            <div class="mb-3">
+                <label for="harga" class="form-label">Harga:</label>
+                <input type="number" name="harga" id="harga" class="form-control" placeholder="Contoh: 50,000">
+            </div>
+
             <!-- Nomor BPOM -->
             <div class="mb-3">
                 <label for="bpom" class="form-label">Nomor BPOM:</label>
@@ -71,6 +77,18 @@
                         <input type="text" name="opsional_key[]" class="form-control me-2" placeholder="Nama Form">
                         <input type="text" name="opsional_value[]" class="form-control me-2" placeholder="Value">
                         <button type="button" class="btn btn-outline-secondary" onclick="addOptionalInput()">Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Varian dan Harga -->
+            <div class="mb-3">
+                <label for="varian" class="form-label">Varian dan Harga:</label>
+                <div id="varian-container">
+                    <div class="input-group mb-2">
+                        <input type="text" name="varian[]" class="form-control me-2" placeholder="Nama Varian">
+                        <input type="number" name="harga[]" class="form-control me-2" placeholder="Harga">
+                        <button type="button" class="btn btn-outline-secondary" onclick="addVarianInput()">Tambah</button>
                     </div>
                 </div>
             </div>
@@ -117,6 +135,18 @@
             newInput.innerHTML = `
                 <input type="text" name="opsional_key[]" class="form-control me-2" placeholder="Nama Form">
                 <input type="text" name="opsional_value[]" class="form-control me-2" placeholder="Value">
+                <button type="button" class="btn btn-outline-secondary" onclick="removeInput(this)">Hapus</button>
+            `;
+            container.appendChild(newInput);
+        }
+
+        function addVarianInput() {
+            const container = document.getElementById('varian-container');
+            const newInput = document.createElement('div');
+            newInput.classList.add('input-group', 'mb-2');
+            newInput.innerHTML = `
+                <input type="text" name="varian[]" class="form-control me-2" placeholder="Nama Varian">
+                <input type="number" name="harga[]" class="form-control me-2" placeholder="Harga">
                 <button type="button" class="btn btn-outline-secondary" onclick="removeInput(this)">Hapus</button>
             `;
             container.appendChild(newInput);
