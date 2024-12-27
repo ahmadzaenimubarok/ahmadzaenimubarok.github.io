@@ -36,10 +36,18 @@
             <!-- Kategori Produk -->
             <div class="mb-3">
                 <label for="kategori" class="form-label">Kategori:</label>
-                <select name="kategori" id="kategori" class="form-select">
+                <select name="kategori" id="kategori" class="form-select" onchange="updateSubkategori()">
                     <option value="">Pilih Kategori</option>
                     <option value="kategori1">Kategori 1</option>
                     <option value="kategori2">Kategori 2</option>
+                </select>
+            </div>
+
+            <!-- Subkategori Produk -->
+            <div class="mb-3">
+                <label for="subkategori" class="form-label">Subkategori:</label>
+                <select name="subkategori" id="subkategori" class="form-select">
+                    <option value="">Pilih Subkategori</option>
                 </select>
             </div>
 
@@ -134,6 +142,20 @@
                 };
                 reader.readAsDataURL(file);
             });
+        }
+
+        function updateSubkategori() {
+            const kategori = document.getElementById('kategori').value;
+            const subkategori = document.getElementById('subkategori');
+            subkategori.innerHTML = '<option value="">Pilih Subkategori</option>';
+
+            if (kategori === 'kategori1') {
+                subkategori.innerHTML += '<option value="subkategori1-1">Subkategori 1-1</option>';
+                subkategori.innerHTML += '<option value="subkategori1-2">Subkategori 1-2</option>';
+            } else if (kategori === 'kategori2') {
+                subkategori.innerHTML += '<option value="subkategori2-1">Subkategori 2-1</option>';
+                subkategori.innerHTML += '<option value="subkategori2-2">Subkategori 2-2</option>';
+            }
         }
     </script>
 
