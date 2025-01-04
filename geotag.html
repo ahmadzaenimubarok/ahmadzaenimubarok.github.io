@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koordinat Lokasi Pengguna</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            text-align: center;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Ambil Koordinat Lokasi Pengguna</h1>
+    <button id="getLocationBtn">Dapatkan Lokasi</button>
+
+    <div class="result" id="locationResult">
+        <p>Koordinat belum tersedia.</p>
+    </div>
+
+    <script>
+        document.getElementById('getLocationBtn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    document.getElementById('locationResult').innerHTML = `
+                        <p><strong>Latitude:</strong> ${latitude}</p>
+                        <p><strong>Longitude:</strong> ${longitude}</p>
+                    `;
+                }, function(error) {
+                    let errorMessage = "Terjadi kesalahan dalam mengambil lokasi.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMessage = "Izin untuk mengakses lokasi ditolak.";
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        errorMessage = "Lokasi tidak tersedia.";
+                    } else if (error.code === error.TIMEOUT) {
+                        errorMessage = "Permintaan untuk mendapatkan lokasi telah melebihi waktu batas.";
+                    }
+                    document.getElementById('locationResult').innerHTML = `
+                        <p style="color: red;">${errorMessage}</p>
+                    `;
+                });
+            } else {
+                document.getElementById('locationResult').innerHTML = `
+                    <p style="color: red;">Geolocation tidak didukung oleh browser ini.</p>
+                `;
+            }
+        });
+    </script>
+
+</body>
+</html>
