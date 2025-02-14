@@ -1,0 +1,700 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Hero Section */
+#HeroSection {
+    background: url('https://placehold.co/1600x800/png') no-repeat center center/cover;
+    background-size: cover;
+    color: white;
+    border-radius: 30px;
+    margin: 20px auto;
+    padding: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Aligns content to the right */
+    min-height: 80vh;
+    width: 90%;
+    max-width: 1400px;
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+/* Hero Content */
+.hero-content {
+    max-width: 40%;
+    text-align: right;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.5); /* Slight background overlay for better readability */
+    border-radius: 15px;
+}
+
+/* Headline */
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* Subline */
+.hero-content p {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+}
+
+/* CTA Button */
+.hero-content button {
+    background: #f38841; /* Accent Color */
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Button Hover Effect */
+.hero-content button:hover {
+    background: #f78490; /* Secondary Color */
+    transform: scale(1.05);
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ✅ Desktop Layout Fix */
+@media screen and (min-width: 1024px) {
+    #HeroSection {
+        display: flex;
+        flex-direction: row; /* Ensures proper two-column layout */
+        justify-content: flex-end; /* Moves text to the right */
+        padding: 100px;
+    }
+
+    .hero-content {
+        max-width: 40%;
+        text-align: right;
+        padding: 50px;
+        background: rgba(0, 0, 0, 0.6); /* Darker overlay for readability */
+    }
+}
+
+/* ✅ Mobile Layout */
+@media screen and (max-width: 768px) {
+    #HeroSection {
+        padding: 60px 20px;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+    }
+
+    .hero-content {
+        max-width: 90%;
+        text-align: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .hero-content button {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}
+
+
+/* How to Participate Section */
+#HowToParticipate {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa; /* Light Background */
+}
+
+/* Section Title */
+#HowToParticipate h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #0e0218; /* Primary Text Color */
+}
+
+/* Steps Container */
+.steps-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Step Card */
+.step-card {
+    background: #00838F; /* Teal Blue */
+    color: white;
+    text-align: center;
+    border-radius: 20px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Step Card Hover Effect */
+.step-card:hover {
+    transform: scale(1.05);
+}
+
+/* Step Icons */
+.step-card img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+/* Step Titles */
+.step-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Step Descriptions */
+.step-card p {
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .steps-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .step-card {
+        width: 90%;
+    }
+}
+
+
+/* Product Section */
+#ProductSection {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa; /* Light Background */
+}
+
+/* Section Title */
+#ProductSection h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #0e0218; /* Primary Text Color */
+}
+
+#ProductSection h2 span {
+    background: #8e1bf0; /* Highlight */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Product Container */
+.product-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Product Slider */
+.product-slider {
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    width: 80%;
+}
+
+/* Product Card */
+.product-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 250px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Product Image */
+.product-card img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Product Name */
+.product-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Price */
+.product-card .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #8e1bf0;
+    margin: 10px 0;
+}
+
+/* Buy Button */
+.buy-btn {
+    background: #f38841;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Button Hover */
+.buy-btn:hover {
+    background: #f78490;
+    transform: scale(1.05);
+}
+
+/* Navigation Arrows */
+.prev-btn, .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.prev-btn { left: 10px; }
+.next-btn { right: 10px; }
+
+.prev-btn:hover, .next-btn:hover {
+    background: #8e1bf0;
+    color: white;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .product-slider {
+        width: 100%;
+        overflow-x: scroll;
+        scrollbar-width: none;
+    }
+
+    .product-card {
+        min-width: 80%;
+    }
+
+    .prev-btn, .next-btn {
+        display: none; /* Hide arrows on mobile */
+    }
+}
+
+
+/* Prizes Section */
+#PrizesSection {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff3e0; /* Light peach background */
+}
+
+/* Section Title */
+#PrizesSection h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #0e0218; /* Primary Text Color */
+}
+
+/* Master Prize */
+.prize-master {
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Master Prize Image */
+.prize-master img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+/* Master Prize Hover */
+.prize-master:hover {
+    transform: scale(1.05);
+}
+
+/* Prizes Grid */
+.prizes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Prize Card */
+.prize-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Prize Image */
+.prize-card img {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Prize Title */
+.prize-card h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* Prize Description */
+.prize-card p {
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Prize Card Hover Effect */
+.prize-card:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .prizes-grid {
+        grid-template-columns: 1fr; /* Stack prizes on mobile */
+    }
+
+    .prize-master {
+        max-width: 90%;
+    }
+}
+
+
+/* FAQ Section */
+#FAQSection {
+    background: #0e0218; /* Dark Background */
+    color: white;
+    text-align: left;
+    padding: 60px 20px;
+}
+
+/* FAQ Title */
+#FAQSection h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#FAQSection p {
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    color: #bbb;
+}
+
+/* FAQ Container */
+.faq-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+/* FAQ Item */
+.faq-item {
+    background: #3a2a17; /* Dark Brown */
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+/* FAQ Item Hover */
+.faq-item:hover {
+    background: #614c29;
+}
+
+/* FAQ Question */
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* FAQ Question Text */
+.faq-question h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Toggle Icon */
+.toggle-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* FAQ Answer */
+.faq-answer {
+    display: none;
+    padding-top: 10px;
+    font-size: 1rem;
+    color: #ddd;
+}
+
+/* Open FAQ Answer */
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+.faq-item.active .toggle-icon {
+    transform: rotate(45deg); /* Change plus to X */
+}
+
+
+
+/* Gallery Section */
+/* Gallery Section */
+#GallerySection {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa; /* Light background */
+}
+
+/* Section Title */
+#GallerySection h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #0e0218;
+}
+
+/* Wrapper for Horizontal Scrolling on Mobile */
+.gallery-wrapper {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    display: flex;
+    justify-content: center;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+        "large large"
+        "small1 small2"
+        "wide wide"
+        "small3 small4";
+    gap: 10px;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* Gallery Items */
+.gallery-item {
+    overflow: hidden;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+    scroll-snap-align: start;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Grid Positioning */
+.gallery-item.large { grid-area: large; }
+.gallery-item.wide { grid-area: wide; }
+.gallery-item:nth-child(2) { grid-area: small1; }
+.gallery-item:nth-child(3) { grid-area: small2; }
+.gallery-item:nth-child(5) { grid-area: small3; }
+
+/* ✅ Mobile: Enable Left Scrolling */
+@media screen and (max-width: 768px) {
+    .gallery-wrapper {
+        overflow-x: auto;
+        display: flex;
+        justify-content: flex-start;
+        padding-bottom: 20px;
+        scrollbar-width: none; /* Hide scrollbar on Firefox */
+        -ms-overflow-style: none; /* Hide scrollbar on IE/Edge */
+    }
+
+    .gallery-wrapper::-webkit-scrollbar {
+        display: none; /* Hide scrollbar on Chrome/Safari */
+    }
+
+    .gallery-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 10px;
+        min-width: 100%;
+    }
+
+    .gallery-item {
+        flex: 0 0 auto;
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
+/* Form Section */
+#FormSection {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa; /* Light grey background */
+}
+
+/* Section Title */
+#FormSection h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #0e0218;
+}
+
+#FormSection p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Form */
+form {
+    background: white;
+    padding: 30px;
+    max-width: 400px;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Labels */
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Required Field Indicator */
+.form-group label span {
+    color: #e63946;
+}
+
+/* Input Fields */
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Input Focus Effect */
+.form-group input:focus {
+    border-color: #8e1bf0;
+    outline: none;
+    box-shadow: 0 0 5px rgba(142, 27, 240, 0.3);
+}
+
+/* Submit Button */
+button {
+    width: 100%;
+    background: #f38841;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Button Hover Effect */
+button:hover {
+    background: #f78490;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+}
+
+
