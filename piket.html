@@ -86,6 +86,7 @@
     }
 
     function acakTugas() {
+  cofunction acakTugas() {
   const anggotaInput = document.getElementById('anggota').value.trim();
   if (!anggotaInput) {
     alert("Masukkan nama anggota terlebih dahulu.");
@@ -95,20 +96,23 @@
   const anggotaList = anggotaInput.split(',').map(n => n.trim()).filter(Boolean);
   const semuaTugas = [...tugasDefault, ...tugasTambahan];
 
-  if (anggotaList.length < semuaTugas.length) {
-    alert(`Jumlah anggota (${anggotaList.length}) kurang dari jumlah tugas (${semuaTugas.length}).`);
+  if (anggotaList.length === 0 || semuaTugas.length === 0) {
+    alert("Pastikan ada tugas dan anggota yang valid.");
     return;
   }
 
+  const tugasTeracak = shuffleArray([...semuaTugas]);
   const anggotaTeracak = shuffleArray([...anggotaList]);
   pembagian = {};
 
-  semuaTugas.forEach((tugas, i) => {
-    pembagian[tugas] = [anggotaTeracak[i]];
-  });
+  for (let i = 0; i < tugasTeracak.length; i++) {
+    const tugas = tugasTeracak[i];
+    const anggota = anggotaTeracak[i % anggotaTeracak.length];
+    pembagian[tugas] = [anggota];
+  }
 
   renderTugas();
-    }
+  }
 
     function renderTugas() {
       const daftarTugas = document.getElementById('daftarTugas');
