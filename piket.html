@@ -35,12 +35,22 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin-right: 10px;
     }
     .tugas-item {
       padding: 10px;
       background: #eaeaea;
       border-radius: 5px;
       margin-bottom: 10px;
+    }
+    #outputText {
+      width: 100%;
+      height: 100px;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
     }
   </style>
 </head>
@@ -57,12 +67,18 @@
       <input type="text" id="anggota" placeholder="Contoh: Budi, Ani, Joko">
     </div>
     <button onclick="acakTugas()">Acak Pembagian</button>
+    <button onclick="copyToClipboard()">Salin ke WhatsApp</button>
 
     <div class="tugas-list" id="daftarTugas"></div>
+
+    <div class="form-group">
+      <label for="outputText">Hasil untuk WhatsApp:</label>
+      <textarea id="outputText" readonly></textarea>
+    </div>
   </div>
 
   <script>
-    let tugasDefault = ["Menyapu", "Mengepel", "Buang Sampah"];
+    let tugasDefault = ["Kamar mandi + buang sampah", "Membersihkan area mushola + ruang meeting", "Kamar mandi + buang sampah", "Menyapu area L dan Teras", "Mematikan pewangi + Isi jimpitan + nyapu wordpress", "Menyapu area belakang"];
     let tugasTambahan = [];
     let pembagian = {};
 
@@ -86,33 +102,73 @@
     }
 
     function acakTugas() {
-  cofunction acakTugas() {
-  const anggotaInput = document.getElementById('anggota').value.trim();
-  if (!anggotaInput) {
-    alert("Masukkan nama anggota terlebih dahulu.");
-    return;
-  }
+      const anggotaInput = document.getElementById('anggota').value.trim();
+      if (!anggotaInput) {
+        alert("Masukkan nama anggota terlebih dahulu.");
+        return;
+      }
 
-  const anggotaList = anggotaInput.split(',').map(n => n.trim()).filter(Boolean);
-  const semuaTugas = [...tugasDefault, ...tugasTambahan];
+      const anggotaList = anggotaInput.split(',').map(n => n.trim()).filter(Boolean);
+      const semuaTugas = [...tugasDefault, ...tugasTambahan];
 
-  if (anggotaList.length === 0 || semuaTugas.length === 0) {
-    alert("Pastikan ada tugas dan anggota yang valid.");
-    return;
-  }
+      if (anggotaList.length === 0 || semuaTugas.length === 0) {
+        alert("Pastikan ada tugas dan anggota yang valid.");
+        return;
+      }
 
-  const tugasTeracak = shuffleArray([...semuaTugas]);
-  const anggotaTeracak = shuffleArray([...anggotaList]);
-  pembagian = {};
+      const tugasTerurut = [...semuaTugas];
+      let anggotaTersedia = shuffleArray([...anggotaList]);
+      pembagian = {};
 
-  for (let i = 0; i < tugasTeracak.length; i++) {
-    const tugas = tugasTeracak[i];
-    const anggota = anggotaTeracak[i % anggotaTeracak.length];
-    pembagian[tugas] = [anggota];
-  }
+      tugasTerurut.forEach(tugas => {
+        pembagian[tugas] = [];
+      });
 
-  renderTugas();
-  }
+      if (anggotaList.length > semuaTugas.length) {
+        let remainingAnggota = [...anggotaTersedia];
+        const baseAnggotaPerTugas = Math.floor(anggotaList.length / semuaTugas.length);
+        let extraAnggota = anggotaList.length % semuaTugas.length;
+
+        tugasTerurut.forEach((tugas, index) => {
+          let jumlahAnggota = baseAnggotaPerTugas;
+          if (index < 2 && extraAnggota > 0) {
+            const anggotaDiperlukan = 2 - jumlahAnggota;
+            if (extraAnggota >= anggotaDiperlukan) {
+              jumlahAnggota = 2;
+              extraAnggota -= anggotaDiperlukan;
+            } else {
+              jumlahAnggota += extraAnggota;
+              extraAnggota = 0;
+            }
+          }
+
+          for (let i = 0; i < jumlahAnggota && remainingAnggota.length > 0; i++) {
+            const anggota = remainingAnggota.shift();
+            pembagian[tugas].push(anggota);
+          }
+        });
+
+        tugasTerurut.forEach(tugas => {
+          if (extraAnggota > 0 && remainingAnggota.length > 0) {
+            const anggota = remainingAnggota.shift();
+            pembagian[tugas].push(anggota);
+            extraAnggota--;
+          }
+        });
+      } else {
+        const tugasTeracak = shuffleArray([...semuaTugas]);
+        tugasTeracak.forEach(tugas => {
+          if (anggotaTersedia.length === 0) {
+            anggotaTersedia = shuffleArray([...anggotaList]);
+          }
+          const anggota = anggotaTersedia.shift();
+          pembagian[tugas].push(anggota);
+        });
+      }
+
+      renderTugas();
+      generateWhatsAppText();
+    }
 
     function renderTugas() {
       const daftarTugas = document.getElementById('daftarTugas');
@@ -126,6 +182,24 @@
         div.innerHTML = `<strong>${tugas}</strong><br>Anggota: ${anggota.join(', ') || '-'}`;
         daftarTugas.appendChild(div);
       });
+    }
+
+    function generateWhatsAppText() {
+      const semuaTugas = [...tugasDefault, ...tugasTambahan];
+      let text = "*PEMBAGIAN PIKET*\n\n";
+      semuaTugas.forEach(tugas => {
+        const anggota = pembagian[tugas] || [];
+        text += `${tugas}: ${anggota.join(', ') || '-'}\n`;
+      });
+      const outputText = document.getElementById('outputText');
+      outputText.value = text;
+    }
+
+    function copyToClipboard() {
+      const outputText = document.getElementById('outputText');
+      outputText.select();
+      document.execCommand('copy');
+      alert('Hasil pembagian telah disalin ke clipboard, siap dikirim ke WhatsApp!');
     }
   </script>
 </body>
