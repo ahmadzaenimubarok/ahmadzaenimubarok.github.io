@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pelacak Waktu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .timer-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .input-group input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .timer-display {
+            font-size: 4em;
+            font-weight: 300;
+            color: #667eea;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .control-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            font-weight: 500;
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+        }
+
+        .control-button.stop {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .control-button.stop:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .log-section {
+            margin-top: 40px;
+        }
+
+        .log-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 400;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .task-name {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .task-details {
+            color: #6c757d;
+            font-size: 0.95em;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .task-duration {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .no-tasks {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .timer-display {
+                font-size: 2.5em;
+            }
+
+            .task-details {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏱️ Pelacak Waktu</h1>
+            <p>Lacak produktivitas kerja Anda dengan mudah</p>
+        </div>
+
+        <div class="main-content">
+            <div class="timer-section">
+                <div class="input-group">
+                    <label for="taskName">Nama Tugas:</label>
+                    <input type="text" id="taskName" placeholder="Masukkan nama tugas..." maxlength="100">
+                </div>
+
+                <div class="timer-display" id="timerDisplay">00:00:00</div>
+
+                <button class="control-button" id="controlButton" onclick="toggleTimer()">
+                    Mulai
+                </button>
+            </div>
+
+            <div class="log-section">
+                <h2>📋 Log Sesi</h2>
+                <ul class="task-list" id="taskList">
+                    <!-- Task items akan ditampilkan di sini -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variabel global
+        let isTimerRunning = false;
+        let startTime = null;
+        let timerInterval = null;
+
+        // Fungsi untuk memformat waktu dalam format HH:MM:SS
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Fungsi untuk memformat tanggal dan waktu
+        function formatDateTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Fungsi untuk mendapatkan data dari localStorage
+        function getTasksFromStorage() {
+            const stored = localStorage.getItem('tasks');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        // Fungsi untuk menyimpan data ke localStorage
+        function saveTasksToStorage(tasks) {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        // Fungsi untuk memperbarui tampilan timer
+        function updateTimerDisplay() {
+            if (isTimerRunning && startTime) {
+                const currentTime = Date.now();
+                const elapsed = currentTime - startTime;
+                document.getElementById('timerDisplay').textContent = formatTime(elapsed);
+            }
+        }
+
+        // Fungsi untuk memulai sesi
+        function mulaiSesi() {
+            const taskName = document.getElementById('taskName').value.trim();
+            
+            if (!taskName) {
+                alert('Silakan masukkan nama tugas terlebih dahulu!');
+                return;
+            }
+
+            isTimerRunning = true;
+            startTime = Date.now();
+            
+            // Update UI
+            document.getElementById('controlButton').textContent = 'Berhenti';
+            document.getElementById('controlButton').classList.add('stop');
+            document.getElementById('taskName').disabled = true;
+
+            // Mulai timer interval
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+            updateTimerDisplay();
+        }
+
+        // Fungsi untuk menyelesaikan sesi
+        function selesaiSesi() {
+            if (!isTimerRunning || !startTime) return;
+
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+            const taskName = document.getElementById('taskName').value.trim();
+
+            // Hentikan timer
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+
+            // Buat objek sesi baru
+            const newTask = {
+                nama: taskName,
+                waktuMulai: startTime,
+                waktuSelesai: endTime,
+                durasi: duration
+            };
+
+            // Simpan ke localStorage
+            const tasks = getTasksFromStorage();
+            tasks.unshift(newTask); // Tambahkan di awal array (terbaru di atas)
+            saveTasksToStorage(tasks);
+
+            // Update UI
+            document.getElementById('controlButton').textContent = 'Mulai';
+            document.getElementById('controlButton').classList.remove('stop');
+            document.getElementById('taskName').disabled = false;
+            document.getElementById('taskName').value = '';
+            document.getElementById('timerDisplay').textContent = '00:00:00';
+
+            // Perbarui tampilan log
+            renderTaskList();
+        }
+
+        // Fungsi toggle untuk tombol mulai/berhenti
+        function toggleTimer() {
+            if (isTimerRunning) {
+                selesaiSesi();
+            } else {
+                mulaiSesi();
+            }
+        }
+
+        // Fungsi untuk merender daftar tugas
+        function renderTaskList() {
+            const tasks = getTasksFromStorage();
+            const taskList = document.getElementById('taskList');
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<li class="no-tasks">Belum ada sesi yang tercatat. Mulai lacak waktu Anda!</li>';
+                return;
+            }
+
+            taskList.innerHTML = tasks.map(task => `
+                <li class="task-item">
+                    <div class="task-name">${task.nama}</div>
+                    <div class="task-details">
+                        <span>Mulai: ${formatDateTime(task.waktuMulai)}</span>
+                        <span>Selesai: ${formatDateTime(task.waktuSelesai)}</span>
+                        <span class="task-duration">Durasi: ${formatTime(task.durasi)}</span>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Fungsi inisialisasi
+        function init() {
+            renderTaskList();
+            
+            // Event listener untuk Enter key pada input
+            document.getElementById('taskName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !isTimerRunning) {
+                    mulaiSesi();
+                }
+            });
+        }
+
+        // Jalankan inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Cleanup saat halaman akan ditutup
+        window.addEventListener('beforeunload', function() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        });
+    </script>
+</body>
+</html>
