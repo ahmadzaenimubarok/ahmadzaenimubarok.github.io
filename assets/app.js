@@ -1,6 +1,6 @@
 // countdown
 
-var countDownDate = new Date("March 12, 2024 00:00:00").getTime();
+var countDownDate = new Date("February 17, 2024 00:00:00").getTime();
 
 var x = setInterval(function() {
     var now = new Date().getTime();
@@ -39,3 +39,4 @@ function slideCards() {
 }
 
 setInterval(slideCards, 3000); // Mengatur interval untuk auto slide setiap 3 detik
+
