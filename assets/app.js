@@ -40,3 +40,4 @@ function slideCards() {
 
 setInterval(slideCards, 3000); // Mengatur interval untuk auto slide setiap 3 detik
 
+
