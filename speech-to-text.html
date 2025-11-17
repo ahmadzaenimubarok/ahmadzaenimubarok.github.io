@@ -243,10 +243,17 @@
 
             recognition.onerror = (event) => {
                 console.error('Error:', event.error);
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                
                 if (event.error === 'no-speech') {
                     status.textContent = 'Tidak ada suara terdeteksi';
                 } else if (event.error === 'not-allowed') {
-                    status.textContent = 'Akses mikrofon ditolak';
+                    status.textContent = 'Akses mikrofon ditolak. Periksa pengaturan browser.';
+                } else if (event.error === 'network') {
+                    status.textContent = 'Error jaringan. Pastikan koneksi internet aktif atau gunakan HTTPS.';
+                } else if (event.error === 'aborted') {
+                    status.textContent = 'Rekaman dibatalkan';
                 } else {
                     status.textContent = 'Terjadi kesalahan: ' + event.error;
                 }
@@ -297,11 +304,17 @@
         // Tombol Mulai
         startBtn.addEventListener('click', () => {
             if (recognition) {
-                recognition.start();
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
-                status.textContent = '🔴 Sedang mendengarkan...';
-                status.className = 'status listening';
+                try {
+                    recognition.start();
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    status.textContent = '🔴 Sedang mendengarkan...';
+                    status.className = 'status listening';
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    status.textContent = 'Error: ' + error.message;
+                    status.className = 'status stopped';
+                }
             }
         });
 
