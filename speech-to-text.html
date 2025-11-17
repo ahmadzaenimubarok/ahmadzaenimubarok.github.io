@@ -37,6 +37,16 @@
             font-size: 28px;
         }
 
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #1565c0;
+        }
+
         .controls {
             display: flex;
             flex-direction: column;
@@ -107,6 +117,16 @@
             transform: translateY(-2px);
         }
 
+        #testBtn {
+            background: #27ae60;
+            color: white;
+            margin-top: 10px;
+        }
+
+        #testBtn:hover {
+            background: #229954;
+        }
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -172,6 +192,19 @@
             color: #856404;
             display: none;
         }
+
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #666;
+            font-family: monospace;
+            max-height: 150px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -179,7 +212,11 @@
         <h1>🎤 Speech to Text</h1>
         
         <div class="warning" id="warning">
-            Browser Anda tidak mendukung Web Speech API. Silakan gunakan Chrome, Edge, atau Safari.
+            Browser Anda tidak mendukung Web Speech API. Silakan gunakan Chrome, Edge, atau Safari versi terbaru.
+        </div>
+
+        <div class="info-box">
+            <strong>Catatan:</strong> Fitur ini memerlukan koneksi internet aktif dan izin akses mikrofon.
         </div>
 
         <div class="controls">
@@ -193,39 +230,90 @@
             </div>
             
             <button id="clearBtn">Hapus Teks</button>
+            <button id="testBtn">Test Mikrofon</button>
         </div>
 
         <div class="status ready" id="status">Siap merekam</div>
 
         <div class="output" id="output"></div>
+
+        <div class="debug-info" id="debugInfo">
+            <strong>Debug Info:</strong><br>
+            Browser: <span id="browserInfo"></span><br>
+            Speech API: <span id="speechApiInfo"></span><br>
+            Koneksi: <span id="networkInfo"></span><br>
+            <div id="errorLog"></div>
+        </div>
     </div>
 
     <script>
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const clearBtn = document.getElementById('clearBtn');
+        const testBtn = document.getElementById('testBtn');
         const output = document.getElementById('output');
         const status = document.getElementById('status');
         const micSelect = document.getElementById('micSelect');
         const warning = document.getElementById('warning');
+        const debugInfo = document.getElementById('debugInfo');
+        const browserInfo = document.getElementById('browserInfo');
+        const speechApiInfo = document.getElementById('speechApiInfo');
+        const networkInfo = document.getElementById('networkInfo');
+        const errorLog = document.getElementById('errorLog');
 
         let recognition;
         let finalTranscript = '';
+        let isRecognitionActive = false;
+
+        // Debug info
+        browserInfo.textContent = navigator.userAgent.split(' ').pop();
+        networkInfo.textContent = navigator.onLine ? 'Online ✓' : 'Offline ✗';
+
+        // Monitor koneksi
+        window.addEventListener('online', () => {
+            networkInfo.textContent = 'Online ✓';
+            networkInfo.style.color = 'green';
+        });
+        window.addEventListener('offline', () => {
+            networkInfo.textContent = 'Offline ✗';
+            networkInfo.style.color = 'red';
+        });
+
+        function logError(msg) {
+            const timestamp = new Date().toLocaleTimeString();
+            errorLog.innerHTML += `<br>[${timestamp}] ${msg}`;
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
 
         // Cek dukungan browser
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
             warning.style.display = 'block';
             startBtn.disabled = true;
             micSelect.disabled = true;
+            speechApiInfo.textContent = 'Tidak didukung ✗';
+            speechApiInfo.style.color = 'red';
+            logError('Browser tidak mendukung Speech Recognition API');
         } else {
+            speechApiInfo.textContent = 'Didukung ✓';
+            speechApiInfo.style.color = 'green';
+            
             // Inisialisasi Speech Recognition
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'id-ID'; // Bahasa Indonesia, bisa diganti ke 'en-US' untuk English
+            recognition.lang = 'id-ID';
+            recognition.maxAlternatives = 1;
 
-            // Event ketika ada hasil
+            // Event handlers
+            recognition.onstart = () => {
+                isRecognitionActive = true;
+                logError('Recognition started');
+                status.textContent = '🔴 Sedang mendengarkan...';
+                status.className = 'status listening';
+            };
+
             recognition.onresult = (event) => {
                 let interimTranscript = '';
 
@@ -233,6 +321,7 @@
                     const transcript = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
                         finalTranscript += transcript + ' ';
+                        logError('Final result: ' + transcript);
                     } else {
                         interimTranscript += transcript;
                     }
@@ -242,35 +331,57 @@
             };
 
             recognition.onerror = (event) => {
-                console.error('Error:', event.error);
+                console.error('Recognition error:', event);
+                isRecognitionActive = false;
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
                 
-                if (event.error === 'no-speech') {
-                    status.textContent = 'Tidak ada suara terdeteksi';
-                } else if (event.error === 'not-allowed') {
-                    status.textContent = 'Akses mikrofon ditolak. Periksa pengaturan browser.';
-                } else if (event.error === 'network') {
-                    status.textContent = 'Error jaringan. Pastikan koneksi internet aktif atau gunakan HTTPS.';
-                } else if (event.error === 'aborted') {
-                    status.textContent = 'Rekaman dibatalkan';
-                } else {
-                    status.textContent = 'Terjadi kesalahan: ' + event.error;
+                let errorMsg = '';
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMsg = 'Tidak ada suara terdeteksi. Coba bicara lebih dekat ke mikrofon.';
+                        break;
+                    case 'not-allowed':
+                        errorMsg = 'Akses mikrofon ditolak. Klik ikon gembok di address bar dan izinkan mikrofon.';
+                        break;
+                    case 'network':
+                        errorMsg = 'Error jaringan. Periksa: 1) Koneksi internet aktif, 2) Gunakan Chrome/Edge versi terbaru, 3) Coba reload halaman.';
+                        break;
+                    case 'aborted':
+                        errorMsg = 'Rekaman dibatalkan.';
+                        break;
+                    case 'audio-capture':
+                        errorMsg = 'Mikrofon tidak dapat diakses. Periksa apakah mikrofon terhubung dan tidak digunakan aplikasi lain.';
+                        break;
+                    case 'service-not-allowed':
+                        errorMsg = 'Layanan speech recognition tidak tersedia. Pastikan Anda menggunakan HTTPS.';
+                        break;
+                    default:
+                        errorMsg = `Error: ${event.error}`;
                 }
+                
+                status.textContent = errorMsg;
                 status.className = 'status stopped';
+                logError(errorMsg);
             };
 
             recognition.onend = () => {
+                isRecognitionActive = false;
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
-                status.textContent = 'Rekaman dihentikan';
-                status.className = 'status stopped';
+                
+                if (status.className !== 'status stopped') {
+                    status.textContent = 'Rekaman dihentikan';
+                    status.className = 'status stopped';
+                }
+                logError('Recognition ended');
             };
         }
 
         // Muat daftar mikrofon
         async function loadMicrophones() {
             try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const audioInputs = devices.filter(device => device.kind === 'audioinput');
                 
@@ -278,6 +389,7 @@
                 
                 if (audioInputs.length === 0) {
                     micSelect.innerHTML = '<option>Tidak ada mikrofon ditemukan</option>';
+                    logError('Tidak ada mikrofon ditemukan');
                     return;
                 }
 
@@ -287,41 +399,87 @@
                     option.textContent = device.label || `Mikrofon ${index + 1}`;
                     micSelect.appendChild(option);
                 });
+                
+                logError(`Ditemukan ${audioInputs.length} mikrofon`);
             } catch (error) {
                 console.error('Error loading microphones:', error);
-                micSelect.innerHTML = '<option>Error memuat mikrofon</option>';
+                micSelect.innerHTML = '<option>Error: ' + error.message + '</option>';
+                logError('Error loading microphones: ' + error.message);
             }
         }
 
-        // Minta izin mikrofon dan muat daftar
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(() => loadMicrophones())
-            .catch((error) => {
-                console.error('Microphone access denied:', error);
-                micSelect.innerHTML = '<option>Akses mikrofon ditolak</option>';
-            });
+        // Test mikrofon
+        testBtn.addEventListener('click', async () => {
+            try {
+                status.textContent = 'Testing mikrofon...';
+                status.className = 'status listening';
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        deviceId: micSelect.value ? { exact: micSelect.value } : undefined
+                    }
+                });
+                
+                status.textContent = '✓ Mikrofon berfungsi dengan baik!';
+                status.className = 'status ready';
+                logError('Test mikrofon berhasil');
+                
+                // Stop stream
+                stream.getTracks().forEach(track => track.stop());
+                
+                setTimeout(() => {
+                    status.textContent = 'Siap merekam';
+                }, 3000);
+            } catch (error) {
+                status.textContent = 'Error test mikrofon: ' + error.message;
+                status.className = 'status stopped';
+                logError('Error test mikrofon: ' + error.message);
+            }
+        });
+
+        // Minta izin dan load mikrofon
+        loadMicrophones();
 
         // Tombol Mulai
-        startBtn.addEventListener('click', () => {
-            if (recognition) {
-                try {
-                    recognition.start();
-                    startBtn.disabled = true;
-                    stopBtn.disabled = false;
-                    status.textContent = '🔴 Sedang mendengarkan...';
-                    status.className = 'status listening';
-                } catch (error) {
-                    console.error('Error starting recognition:', error);
-                    status.textContent = 'Error: ' + error.message;
-                    status.className = 'status stopped';
+        startBtn.addEventListener('click', async () => {
+            if (!recognition) {
+                logError('Recognition object tidak tersedia');
+                return;
+            }
+
+            if (!navigator.onLine) {
+                status.textContent = 'Tidak ada koneksi internet!';
+                status.className = 'status stopped';
+                logError('Tidak ada koneksi internet');
+                return;
+            }
+
+            try {
+                // Stop jika masih aktif
+                if (isRecognitionActive) {
+                    recognition.stop();
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
+
+                recognition.start();
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                logError('Memulai recognition...');
+            } catch (error) {
+                console.error('Error starting recognition:', error);
+                status.textContent = 'Error: ' + error.message;
+                status.className = 'status stopped';
+                logError('Error starting: ' + error.message);
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
             }
         });
 
         // Tombol Stop
         stopBtn.addEventListener('click', () => {
-            if (recognition) {
+            if (recognition && isRecognitionActive) {
                 recognition.stop();
+                logError('Menghentikan recognition...');
             }
         });
 
@@ -331,6 +489,7 @@
             output.innerHTML = '';
             status.textContent = 'Teks dihapus. Siap merekam.';
             status.className = 'status ready';
+            logError('Teks dihapus');
         });
     </script>
 </body>
