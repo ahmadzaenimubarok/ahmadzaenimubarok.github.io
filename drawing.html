@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .board {
+    width: 100%;
+    max-width: 760px;
+    background: #f7f3ee;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .board-header {
+    background: #1a1a2e;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .board-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #f7f3ee;
+    letter-spacing: 0.5px;
+  }
+
+  .board-title span {
+    color: #ffd166;
+  }
+
+  .timer-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #2d2d4a;
+    border-radius: 14px;
+    padding: 8px 18px;
+    min-width: 80px;
+    border: 2px solid #3d3d5c;
+    transition: background 0.4s, border-color 0.4s;
+  }
+
+  .timer-badge.green { background: #0a5c3a; border-color: #1a9e6a; }
+  .timer-badge.yellow { background: #7a4a00; border-color: #ffa500; }
+  .timer-badge.red { background: #6b1111; border-color: #e74c3c; animation: pulse 0.8s infinite; }
+  .timer-badge.dark-red { background: #3a0000; border-color: #8b0000; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .timer-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .timer-count {
+    font-family: 'Nunito', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    background: #fff;
+    margin: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #e0d8d0;
+    cursor: crosshair;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    touch-action: none;
+  }
+
+  .times-up-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+    border-radius: 10px;
+  }
+
+  .times-up-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .times-up-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: #ffd166;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+    animation: pop-in 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  .times-up-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .board-footer {
+    padding: 0 16px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 9px 20px;
+    border-radius: 10px;
+    border: 2.5px solid transparent;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+
+  .btn:active { transform: scale(0.96); }
+
+  .btn-outline {
+    background: transparent;
+    border-color: #b0a898;
+    color: #5a5047;
+  }
+
+  .btn-outline:hover { background: #ede6df; }
+
+  .btn-primary {
+    background: #1a1a2e;
+    border-color: #1a1a2e;
+    color: #ffd166;
+  }
+
+  .btn-primary:hover { background: #2d2d4a; }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #b0a898;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  .status-dot.drawing { background: #2ecc71; box-shadow: 0 0 6px #2ecc71; animation: blink 1.2s infinite; }
+  .status-dot.times_up { background: #e74c3c; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8a8078;
+    letter-spacing: 0.3px;
+  }
+
+  .status-text.drawing { color: #2ecc71; }
+  .status-text.times_up { color: #e74c3c; }
+
+  .spacer { flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="board">
+  <div class="board-header">
+    <div class="board-title">🎨 <span>Pictionary</span> Drawing Board</div>
+    <div class="timer-badge" id="timerBadge">
+      <div class="timer-label">Timer</div>
+      <div class="timer-count" id="timerCount">60</div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="drawCanvas"></canvas>
+    <div class="times-up-overlay" id="timesUpOverlay">
+      <div class="times-up-text">TIME'S UP!</div>
+      <div class="times-up-sub">Tekan Reset Turn untuk mulai lagi</div>
+    </div>
+  </div>
+
+  <div class="board-footer">
+    <div class="status-dot" id="statusDot"></div>
+    <div class="status-text" id="statusText">Siap — mulai menggambar untuk memulai timer</div>
+    <div class="spacer"></div>
+    <button class="btn btn-outline" id="btnResetCanvas">Reset Canvas</button>
+    <button class="btn btn-primary" id="btnResetTurn">Reset Turn</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('drawCanvas');
+const ctx = canvas.getContext('2d');
+const timerBadge = document.getElementById('timerBadge');
+const timerCount = document.getElementById('timerCount');
+const timesUpOverlay = document.getElementById('timesUpOverlay');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const canvasWrap = document.getElementById('canvasWrap');
+
+const DURATION = 60;
+
+let state = {
+  status: 'idle',
+  timeLeft: DURATION,
+  hasStartedDrawing: false,
+  timerInterval: null,
+  isDrawing: false,
+  lastX: 0,
+  lastY: 0
+};
+
+function resizeCanvas() {
+  const w = canvas.offsetWidth;
+  const h = Math.round(w * 0.56);
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.height = h + 'px';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function setStatus(s) {
+  state.status = s;
+  statusDot.className = 'status-dot ' + s;
+  if (s === 'idle') {
+    statusText.textContent = 'Siap — mulai menggambar untuk memulai timer';
+    statusText.className = 'status-text';
+  } else if (s === 'drawing') {
+    statusText.textContent = 'Menggambar — timer berjalan!';
+    statusText.className = 'status-text drawing';
+  } else if (s === 'times_up') {
+    statusText.textContent = 'Waktu habis!';
+    statusText.className = 'status-text times_up';
+  }
+}
+
+function updateTimerColor(t) {
+  timerBadge.className = 'timer-badge';
+  if (t >= 31) timerBadge.classList.add('green');
+  else if (t >= 11) timerBadge.classList.add('yellow');
+  else if (t >= 1) timerBadge.classList.add('red');
+  else timerBadge.classList.add('dark-red');
+}
+
+function startTimer() {
+  if (state.hasStartedDrawing) return;
+  state.hasStartedDrawing = true;
+  setStatus('drawing');
+  state.timerInterval = setInterval(() => {
+    state.timeLeft--;
+    if (state.timeLeft <= 0) {
+      state.timeLeft = 0;
+      clearInterval(state.timerInterval);
+      timerCount.textContent = '0';
+      updateTimerColor(0);
+      setStatus('times_up');
+      timesUpOverlay.classList.add('show');
+    } else {
+      timerCount.textContent = state.timeLeft;
+      updateTimerColor(state.timeLeft);
+    }
+  }, 1000);
+}
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  let cx, cy;
+  if (e.touches) {
+    cx = (e.touches[0].clientX - rect.left) * scaleX;
+    cy = (e.touches[0].clientY - rect.top) * scaleY;
+  } else {
+    cx = (e.clientX - rect.left) * scaleX;
+    cy = (e.clientY - rect.top) * scaleY;
+  }
+  return [cx, cy];
+}
+
+function onPointerDown(e) {
+  if (state.status === 'times_up') return;
+  state.isDrawing = true;
+  [state.lastX, state.lastY] = getPos(e);
+  ctx.beginPath();
+  ctx.arc(state.lastX, state.lastY, 1.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fill();
+  if (!state.hasStartedDrawing) startTimer();
+  e.preventDefault();
+}
+
+function onPointerMove(e) {
+  if (!state.isDrawing || state.status === 'times_up') return;
+  const [x, y] = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(state.lastX, state.lastY);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  [state.lastX, state.lastY] = [x, y];
+  e.preventDefault();
+}
+
+function onPointerUp() {
+  state.isDrawing = false;
+}
+
+canvas.addEventListener('mousedown', onPointerDown);
+canvas.addEventListener('mousemove', onPointerMove);
+canvas.addEventListener('mouseup', onPointerUp);
+canvas.addEventListener('mouseleave', onPointerUp);
+canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+canvas.addEventListener('touchmove', onPointerMove, { passive: false });
+canvas.addEventListener('touchend', onPointerUp);
+
+document.getElementById('btnResetCanvas').addEventListener('click', () => {
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+});
+
+document.getElementById('btnResetTurn').addEventListener('click', () => {
+  clearInterval(state.timerInterval);
+  state = {
+    status: 'idle',
+    timeLeft: DURATION,
+    hasStartedDrawing: false,
+    timerInterval: null,
+    isDrawing: false,
+    lastX: 0,
+    lastY: 0
+  };
+  timerCount.textContent = DURATION;
+  timerBadge.className = 'timer-badge';
+  timesUpOverlay.classList.remove('show');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  setStatus('idle');
+});
+
+resizeCanvas();
+window.addEventListener('resize', () => {
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  resizeCanvas();
+  ctx.putImageData(imageData, 0, 0);
+});
+</script>
+</body>
+</html>
