@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pictionary Word Randomizer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #94a3b8;
+      --text: #f8fafc;
+      --accent: #38bdf8;
+      --danger: #fb7185;
+      --border: rgba(255,255,255,.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,.25), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(251,113,133,.18), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 48px);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .card {
+      min-height: 150px;
+      background: rgba(17, 24, 39, .84);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.24);
+      backdrop-filter: blur(12px);
+      margin-bottom: 16px;
+    }
+
+    .control-card {
+      text-align: center;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+      color: #07111f;
+      background: var(--accent);
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+      opacity: .85;
+    }
+
+    button.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.12);
+      border: 1px solid var(--border);
+    }
+
+    button.danger {
+      background: var(--danger);
+      color: #27040b;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .word {
+      min-height: 110px;
+      display: grid;
+      place-items: center;
+      font-size: clamp(44px, 11vw, 110px);
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      word-break: break-word;
+      text-align: center;
+    }
+
+    .message {
+      margin-top: 12px;
+      color: var(--muted);
+      min-height: 24px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .stats {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,.06);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .history h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 22px;
+      color: var(--text);
+      line-height: 1.7;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    li span {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>Pictionary Word Randomizer</h1>
+      <p class="subtitle">
+        Dipakai panitia untuk mengacak 1 kata. Daftar kata disimpan di sistem dan tidak ditampilkan ke layar.
+      </p>
+    </header>
+
+    <section class="card control-card">
+      <div class="badge">Mode: 1 Kata</div>
+      <p class="subtitle">
+        Tekan tombol random untuk mengambil satu kata. Kata yang sudah keluar tidak akan muncul lagi sampai di-reset.
+      </p>
+      <div class="actions">
+        <button id="randomWord">Random Kata</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="word" id="selectedWord">—</div>
+      <div class="message" id="message">Tekan tombol random.</div>
+
+      <div class="stats">
+        <div class="stat">
+          <strong id="remainingWords">0</strong>
+          <span>Kata tersisa</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="secondary" id="resetUsed">Reset Used Words</button>
+        <button class="danger" id="resetAll">Reset All</button>
+      </div>
+    </section>
+
+    <section class="card history">
+      <h2>Riwayat Kata Keluar</h2>
+      <ol id="historyList"></ol>
+      <p class="footer-note">
+        Saran: pakai app ini di HP panitia. Jangan tampilkan layar ini ke pemain, ben ora bocor.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const defaultWords = [
+      "Pocong",
+      "Tuyul",
+      "Alien",
+      "Robot",
+      "Dinosaurus",
+      "Badut",
+      "Dukun",
+      "Satpam",
+      "Ojol",
+      "Ninja",
+      "Gorila",
+      "Kambing",
+      "Kecoak",
+      "Cicak",
+      "Kodok",
+      "Nyamuk",
+      "Bekicot",
+      "Ular",
+      "Kaktus",
+      "Kulkas",
+      "Ricecooker",
+      "Knalpot",
+      "Jamban",
+      "Gayung",
+      "Ember",
+      "Sapu",
+      "Payung",
+      "Helm",
+      "Sendal",
+      "Kacamata",
+      "Remote",
+      "Charger",
+      "Kompor",
+      "Toilet",
+      "Kerupuk",
+      "Seblak",
+      "Cilok",
+      "Martabak",
+      "Bakso",
+      "Donat",
+      "Kopi",
+      "Bantal",
+      "Kasur",
+      "Kursi",
+      "Meja",
+      "Pintu",
+      "Jendela",
+      "Kipas",
+      "Motor",
+      "Mobil",
+      "Sepeda",
+      "Lampu",
+      "WiFi",
+      "Laptop",
+      "Kamera",
+      "Sandal",
+      "Topi",
+      "Jam",
+      "Panci",
+      "Wajan",
+      "Koper",
+      "Tongkat",
+      "Boneka",
+      "Kapal",
+      "Roket",
+      "Balon",
+      "Kue",
+      "Sosis",
+      "EsKrim",
+      "Kuda",
+      "Ayam",
+      "Bebek",
+      "Sapi",
+      "Gajah",
+      "Singa",
+      "Ikan",
+      "Burung",
+      "KuraKura",
+      "LabaLaba"
+    ];
+
+    const els = {
+      randomWord: document.getElementById("randomWord"),
+      selectedWord: document.getElementById("selectedWord"),
+      message: document.getElementById("message"),
+      remainingWords: document.getElementById("remainingWords"),
+      resetUsed: document.getElementById("resetUsed"),
+      resetAll: document.getElementById("resetAll"),
+      historyList: document.getElementById("historyList"),
+    };
+
+    const storageKey = "pictionary_word_randomizer_single_mode_v1";
+
+    const state = loadState() || {
+      usedWords: [],
+      history: [],
+      selectedWord: null
+    };
+
+    function normalizeWords(words) {
+      const seen = new Set();
+      return words
+        .map(word => String(word).trim().replace(/\s+/g, " "))
+        .filter(Boolean)
+        .filter(word => {
+          const key = word.toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function getAvailableWords() {
+      const words = normalizeWords(defaultWords);
+      const used = state.usedWords.map(w => w.toLowerCase());
+      return words.filter(word => !used.includes(word.toLowerCase()));
+    }
+
+    function randomPick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function pickWord() {
+      const available = getAvailableWords();
+
+      if (available.length === 0) {
+        els.message.textContent = "Semua kata sudah digunakan. Silakan reset used words.";
+        return;
+      }
+
+      const picked = randomPick(available);
+
+      state.usedWords.push(picked);
+      state.selectedWord = picked;
+      state.history.unshift({
+        word: picked,
+        time: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
+      });
+
+      els.selectedWord.textContent = picked;
+      els.message.textContent = "Kata berhasil diacak.";
+      saveState();
+      render();
+    }
+
+    function render() {
+      els.remainingWords.textContent = getAvailableWords().length;
+
+      if (state.selectedWord) {
+        els.selectedWord.textContent = state.selectedWord;
+      }
+
+      els.historyList.innerHTML = "";
+
+      if (!state.history.length) {
+        const li = document.createElement("li");
+        li.textContent = "Belum ada riwayat.";
+        els.historyList.appendChild(li);
+        return;
+      }
+
+      state.history.forEach(item => {
+        const li = document.createElement("li");
+        li.innerHTML = `${escapeHtml(item.word)} <span>— ${escapeHtml(item.time)}</span>`;
+        els.historyList.appendChild(li);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    els.randomWord.addEventListener("click", pickWord);
+
+    els.resetUsed.addEventListener("click", () => {
+      state.usedWords = [];
+      state.history = [];
+      state.selectedWord = null;
+      els.selectedWord.textContent = "—";
+      els.message.textContent = "Riwayat kata sudah di-reset.";
+      saveState();
+      render();
+    });
+
+    els.resetAll.addEventListener("click", () => {
+      const ok = confirm("Reset semua riwayat kata?");
+      if (!ok) return;
+
+      state.usedWords = [];
+      state.history = [];
+      state.selectedWord = null;
+
+      els.selectedWord.textContent = "—";
+      els.message.textContent = "Riwayat dikosongkan. Daftar kata tetap tersimpan di sistem.";
+      saveState();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
