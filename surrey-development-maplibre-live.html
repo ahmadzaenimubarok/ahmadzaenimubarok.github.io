@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Surrey Development Visualization — MapLibre</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.css">
+<style>
+*{box-sizing:border-box}html,body,#app{margin:0;width:100%;height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18232d}
+button,input{font:inherit}.app{height:100%;display:flex;flex-direction:column;background:#f5f7f9}
+header{height:62px;background:#fff;border-bottom:1px solid #dfe5e9;display:flex;align-items:center;padding:0 20px;gap:26px;z-index:5}
+.brand{font-weight:800;font-size:17px;white-space:nowrap}.brand span{color:#1769aa}
+nav{display:flex;gap:4px}nav button{border:0;background:transparent;padding:8px 12px;border-radius:7px;color:#65727d;cursor:pointer}nav button.active{background:#edf5fb;color:#1769aa;font-weight:650}
+.search{margin-left:auto;width:245px;border:1px solid #dfe5e9;border-radius:7px;padding:8px 11px;background:#fafbfc}
+.main{flex:1;min-height:0;display:flex}.sidebar{width:315px;background:#fff;border-right:1px solid #dfe5e9;padding:17px;overflow:auto;z-index:3}
+.sidebar h3{font-size:14px;margin:0 0 5px}.muted{font-size:11px;color:#6f7d88;line-height:1.5}
+.section{border-top:1px solid #e5e9ec;margin-top:15px;padding-top:14px}.section-title{font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.05em;color:#687682;margin-bottom:9px}
+.check{display:flex;align-items:center;gap:8px;font-size:12px;margin:9px 0;cursor:pointer}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.project{padding:10px;border:1px solid #e2e7eb;border-radius:8px;margin:7px 0;cursor:pointer}.project:hover,.project.selected{border-color:#91bddc;background:#f4f9fd}.project b{display:block;font-size:12px}.project span{display:block;font-size:10px;color:#73808a;margin-top:3px}
+.map-wrap{position:relative;flex:1;min-width:0}.map{position:absolute;inset:0}
+.panel{position:absolute;right:16px;top:16px;width:330px;max-height:calc(100% - 32px);overflow:auto;background:#fff;border:1px solid #dce3e7;border-radius:10px;box-shadow:0 5px 22px #0002;z-index:2;padding:17px}
+.panel h2{font-size:19px;margin:0 0 4px}.badge{display:inline-block;padding:4px 7px;border-radius:99px;background:#fff1ed;color:#b83f20;font-size:10px;margin:5px 0 13px}
+.detail-section{border-top:1px solid #e5e9ec;padding:13px 0}.detail-section h4{font-size:10px;color:#71808b;text-transform:uppercase;letter-spacing:.06em;margin:0 0 9px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat{background:#f7f9fa;border-radius:7px;padding:9px}.stat b{display:block;font-size:14px}.stat span{font-size:9px;color:#73808a}
+.nearby{display:flex;justify-content:space-between;padding:5px 0;font-size:11px}.cta{width:100%;background:#1769aa;border:0;color:#fff;padding:10px;border-radius:7px;font-weight:700;cursor:pointer}
+.toolbar{position:absolute;left:16px;top:16px;display:flex;background:#fff;border:1px solid #dce3e7;border-radius:8px;overflow:hidden;box-shadow:0 3px 12px #0002;z-index:2}.toolbar button{border:0;border-right:1px solid #e2e7eb;background:#fff;padding:9px 12px;font-size:11px;cursor:pointer}.toolbar button:last-child{border:0}.toolbar button.active{background:#edf5fb;color:#1769aa;font-weight:700}
+.status{position:absolute;left:16px;bottom:16px;background:#fff;border:1px solid #dce3e7;border-radius:8px;padding:9px 12px;font-size:10px;box-shadow:0 3px 12px #0002;z-index:2}
+#loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:13px 17px;border-radius:8px;box-shadow:0 4px 20px #0002;z-index:10;font-size:12px}
+.legend{position:absolute;left:16px;bottom:65px;background:#fff;border:1px solid #dce3e7;border-radius:8px;padding:10px 12px;box-shadow:0 3px 12px #0002;z-index:2;font-size:10px}.legend div{margin:5px 0}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.maplibregl-popup-content{font-family:inherit;padding:12px;border-radius:7px}.popup-title{font-weight:750;font-size:12px}.popup-meta{font-size:10px;color:#6d7a84;margin-top:4px}
+@media(max-width:900px){.sidebar{width:260px}.panel{width:290px}.search{display:none}}
+@media(max-width:700px){.sidebar{display:none}.panel{width:calc(100% - 32px);max-height:43%;top:auto;bottom:16px}}
+</style>
+</head>
+<body>
+<div id="app" class="app">
+<header>
+  <div class="brand">Surrey <span>Development Map</span></div>
+  <nav><button class="active">Explore</button><button>Projects</button><button>About</button></nav>
+  <input class="search" placeholder="Search development projects...">
+</header>
+<div class="main">
+<aside class="sidebar">
+  <h3>Explore Surrey Development</h3>
+  <div class="muted">Live public GIS data from the City of Surrey. This prototype intentionally loads a limited number of features for a lightweight demo.</div>
+
+  <div class="section">
+    <div class="section-title">Map layers</div>
+    <label class="check"><input id="devToggle" type="checkbox" checked> <i class="dot" style="background:#e4572e"></i> Development applications</label>
+    <label class="check"><input id="buildingToggle" type="checkbox" checked> <i class="dot" style="background:#8ca6b5"></i> Existing buildings</label>
+    <label class="check"><input id="transitToggle" type="checkbox" checked> <i class="dot" style="background:#6f42c1"></i> Transit stops</label>
+    <label class="check"><input id="parkToggle" type="checkbox" checked> <i class="dot" style="background:#54a56a"></i> Parks / amenities</label>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Priority areas</div>
+    <label class="check"><input type="checkbox" checked> Surrey City Centre</label>
+    <label class="check"><input type="checkbox"> Fleetwood Town Centre</label>
+    <label class="check"><input type="checkbox"> Campbell Heights</label>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Development applications</div>
+    <div id="projectList"><div class="muted">Loading live projects...</div></div>
+  </div>
+</aside>
+
+<section class="map-wrap">
+  <div id="map" class="map"></div>
+  <div id="loading">Loading City of Surrey GIS data…</div>
+
+  <div class="toolbar">
+    <button id="btn2d" class="active" onclick="set3D(false)">2D</button>
+    <button id="btn3d" onclick="set3D(true)">3D</button>
+    <button onclick="map.flyTo({center:[-122.849,49.19],zoom:12.3,pitch:0,bearing:0})">Reset</button>
+  </div>
+
+  <div class="legend">
+    <div><i style="background:#e4572e"></i> Development application</div>
+    <div><i style="background:#8ca6b5"></i> Existing building</div>
+    <div><i style="background:#6f42c1"></i> Transit stop</div>
+    <div><i style="background:#54a56a"></i> Park / amenity</div>
+  </div>
+
+  <div class="status">
+    <b id="featureCount">Loading…</b> · City of Surrey OpenData · MapLibre GL JS
+  </div>
+
+  <aside class="panel">
+    <h2 id="detailTitle">Select a development</h2>
+    <span id="detailBadge" class="badge" style="display:none">Development Application</span>
+    <div class="detail-section">
+      <h4>Project information</h4>
+      <div class="stats">
+        <div class="stat"><b id="projectNo">—</b><span>Project number</span></div>
+        <div class="stat"><b id="projectType">—</b><span>Type</span></div>
+        <div class="stat"><b id="projectStatus">—</b><span>Status</span></div>
+        <div class="stat"><b id="projectArea">—</b><span>Site area</span></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h4>Description</h4>
+      <div id="projectDescription" class="muted">Click a development polygon on the map to inspect the live City data.</div>
+    </div>
+    <div class="detail-section">
+      <h4>Context analysis</h4>
+      <div class="nearby"><span>Nearby transit</span><b id="nearestTransit">—</b></div>
+      <div class="nearby"><span>Nearby park</span><b id="nearestPark">—</b></div>
+      <div class="nearby"><span>Map scale</span><b id="mapScale">City / project</b></div>
+    </div>
+    <div class="detail-section">
+      <button class="cta" onclick="set3D(true)">Explore this area in 3D</button>
+    </div>
+  </aside>
+</section>
+</div>
+</div>
+
+<script type="module">
+import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.mjs';
+
+const API='https://gisservices.surrey.ca/arcgis/rest/services/OpenData/MapServer';
+const endpoints={
+  developments:`${API}/167/query?where=1%3D1&outFields=OBJECTID%2CPROJECT_NO%2CDESCRIPTION%2CPROJECT_TYPE%2CSTATUS&returnGeometry=true&outSR=4326&resultRecordCount=45&f=geojson`,
+  buildings:`${API}/155/query?where=1%3D1&outFields=OBJECTID%2CNAME%2CFACILITYID%2CLOCATION%2CCIVIC_FACILITY&returnGeometry=true&outSR=4326&resultRecordCount=350&f=geojson`,
+  transit:`${API}/102/query?where=1%3D1&outFields=OBJECTID%2CBUS_STOP_NO%2CROUTE_NO%2CDIRECTION&returnGeometry=true&outSR=4326&resultRecordCount=250&f=geojson`,
+  parks:`https://gisservices.surrey.ca/arcgis/rest/services/ParksFinder/MapServer/0/query?where=1%3D1&outFields=OBJECTID%2CPARK_NAME&returnGeometry=true&outSR=4326&resultRecordCount=80&f=geojson`
+};
+
+window.map=null; let selectedFeature=null;
+
+const osmStyle={
+  version:8,
+  sources:{
+    osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}
+  },
+  layers:[{id:'osm',type:'raster',source:'osm'}]
+};
+
+const map=new maplibregl.Map({
+  container:'map',style:osmStyle,
+  center:[-122.849,49.19],zoom:12.35,pitch:0,bearing:0,
+  maxPitch:70
+});
+window.map=map;
+map.addControl(new maplibregl.NavigationControl(),'top-right');
+
+async function getJSON(url){
+  const r=await fetch(url);
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+function addLayers(data){
+  map.addSource('developments',{type:'geojson',data});
+  map.addLayer({
+    id:'development-fill',type:'fill',source:'developments',
+    paint:{'fill-color':['match',['get','STATUS'],'In Process','#e4572e','Approved','#2e8b57','#e4572e'],'fill-opacity':.48}
+  });
+  map.addLayer({id:'development-outline',type:'line',source:'developments',paint:{'line-color':'#b83f20','line-width':1.5}});
+  map.addLayer({
+    id:'development-label',type:'symbol',source:'developments',
+    layout:{'text-field':['get','PROJECT_NO'],'text-size':10,'text-offset':[0,1]},
+    paint:{'text-color':'#8c301b','text-halo-color':'#fff','text-halo-width':1.5}
+  });
+
+  map.addSource('buildings',{type:'geojson',data:window.buildingData});
+  map.addLayer({id:'buildings-fill',type:'fill',source:'buildings',paint:{'fill-color':'#8ca6b5','fill-opacity':.48,'fill-outline-color':'#718895'}});
+  map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'buildings',layout:{visibility:'none'},paint:{'fill-extrusion-color':'#8ca6b5','fill-extrusion-height':10,'fill-extrusion-base':0,'fill-extrusion-opacity':.72}});
+
+  map.addSource('transit',{type:'geojson',data:window.transitData});
+  map.addLayer({id:'transit',type:'circle',source:'transit',paint:{'circle-color':'#6f42c1','circle-radius':4,'circle-stroke-color':'#fff','circle-stroke-width':1.5}});
+
+  map.addSource('parks',{type:'geojson',data:window.parkData});
+  map.addLayer({id:'parks',type:'fill',source:'parks',paint:{'fill-color':'#54a56a','fill-opacity':.20}});
+  map.addLayer({id:'parks-outline',type:'line',source:'parks',paint:{'line-color':'#54a56a','line-width':1}});
+
+  ['development-fill','development-outline','development-label','buildings-fill','buildings-3d','transit','parks','parks-outline'].forEach(id=>{
+    map.on('click',id,e=>{
+      if(id.startsWith('development')) selectDevelopment(e.features[0]);
+    });
+  });
+  map.on('mouseenter','development-fill',()=>map.getCanvas().style.cursor='pointer');
+  map.on('mouseleave','development-fill',()=>map.getCanvas().style.cursor='');
+}
+
+function selectDevelopment(feature){
+  selectedFeature=feature;
+  const p=feature.properties||{};
+  document.getElementById('detailTitle').textContent=p.DESCRIPTION ? p.DESCRIPTION.split(/\s+/).slice(0,8).join(' ') : `Development ${p.PROJECT_NO||''}`;
+  document.getElementById('detailBadge').style.display='inline-block';
+  document.getElementById('projectNo').textContent=p.PROJECT_NO||'—';
+  document.getElementById('projectType').textContent=p.PROJECT_TYPE||'—';
+  document.getElementById('projectStatus').textContent=p.STATUS||'—';
+  document.getElementById('projectDescription').textContent=p.DESCRIPTION||'No description available.';
+  const area=feature.geometry;
+  document.getElementById('projectArea').textContent='GIS polygon';
+  map.fitBounds(feature.geometry.coordinates[0].reduce((b,c)=>b.extend(c),new maplibregl.LngLatBounds(feature.geometry.coordinates[0][0],feature.geometry.coordinates[0][0])),{padding:{top:80,bottom:80,left:330,right:390},maxZoom:15});
+  document.getElementById('nearestTransit').textContent='See transit layer';
+  document.getElementById('nearestPark').textContent='See park layer';
+  document.getElementById('projectList').querySelectorAll('.project').forEach(x=>x.classList.toggle('selected',x.dataset.id==p.OBJECTID));
+}
+
+function renderProjectList(data){
+  const list=document.getElementById('projectList'); list.innerHTML='';
+  data.features.slice(0,8).forEach(f=>{
+    const p=f.properties||{}, el=document.createElement('div');
+    el.className='project'; el.dataset.id=p.OBJECTID;
+    el.innerHTML=`<b>${p.PROJECT_NO||'Development application'}</b><span>${(p.PROJECT_TYPE||'Project')} · ${(p.STATUS||'Status')}</span>`;
+    el.onclick=()=>{selectDevelopment(f);};
+    list.appendChild(el);
+  });
+}
+
+function toggle(id,visible){
+  if(!map.getLayer(id)) return;
+  map.setLayoutProperty(id,'visibility',visible?'visible':'none');
+}
+function set3D(enabled){
+  document.getElementById('btn3d').classList.toggle('active',enabled);
+  document.getElementById('btn2d').classList.toggle('active',!enabled);
+  if(enabled){
+    map.easeTo({pitch:55,bearing:-18,duration:700});
+    toggle('buildings-fill',false); toggle('buildings-3d',true);
+    toggle('development-label',true);
+  }else{
+    map.easeTo({pitch:0,bearing:0,duration:700});
+    toggle('buildings-fill',true); toggle('buildings-3d',false);
+  }
+}
+window.set3D=set3D;
+
+document.getElementById('devToggle').onchange=e=>{toggle('development-fill',e.target.checked);toggle('development-outline',e.target.checked);toggle('development-label',e.target.checked)};
+document.getElementById('buildingToggle').onchange=e=>{toggle('buildings-fill',e.target.checked);toggle('buildings-3d',e.target.checked && map.getPitch()>0)};
+document.getElementById('transitToggle').onchange=e=>toggle('transit',e.target.checked);
+document.getElementById('parkToggle').onchange=e=>{toggle('parks',e.target.checked);toggle('parks-outline',e.target.checked)};
+
+map.on('load',async()=>{
+  try{
+    const [dev,bld,trn,park]=await Promise.all(Object.values(endpoints).map(getJSON));
+    window.buildingData=bld; window.transitData=trn; window.parkData=park;
+    addLayers(dev); renderProjectList(dev);
+    document.getElementById('featureCount').textContent=`${dev.features.length} development applications`;
+    document.getElementById('loading').remove();
+  }catch(err){
+    document.getElementById('loading').textContent='Could not load live Surrey GIS data. Check browser network/CORS access.';
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>
