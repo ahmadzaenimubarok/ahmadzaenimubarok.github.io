@@ -45,10 +45,18 @@ header{height:62px;background:#fff;border-bottom:1px solid #dfe5e9;display:flex;
 <div class="detail-section"><div class="model-note"><b>3D strategy:</b> existing city context uses MapLibre extrusion. A supplied GLB/GLTF can be positioned at the selected development and rendered as the proposed building.</div></div>
 <div class="detail-section"><button id="explore3d" class="cta">Explore this area in 3D</button></div></aside>
 </section></div></div>
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
 <script type="module">
 import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.mjs';
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const API='https://gisservices.surrey.ca/arcgis/rest/services/OpenData/MapServer';
 const endpoints={
