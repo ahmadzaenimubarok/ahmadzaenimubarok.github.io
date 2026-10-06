@@ -121,10 +121,14 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-
 
 const API='https://gisservices.surrey.ca/arcgis/rest/services/OpenData/MapServer';
 const endpoints = {
-  developments: `${API}/167/query?where=1%3D1&outFields=OBJECTID%2CPROJECT_NO%2CDESCRIPTION%2CSTATUS&returnGeometry=true&outSR=4326&resultRecordCount=45&f=geojson`,
-  buildings: `${API}/155/query?where=1%3D1&outFields=OBJECTID%2CNAME%2CFACILITYID%2CLOCATION%2CCIVIC_FACILITY&returnGeometry=true&outSR=4326&resultRecordCount=350&f=geojson`,
-  transit: `${API}/102/query?where=1%3D1&outFields=OBJECTID%2CBUS_STOP_NO%2CROUTE_NO%2CDIRECTION&returnGeometry=true&outSR=4326&resultRecordCount=250&f=geojson`,
-  parks: `https://gisservices.surrey.ca/arcgis/rest/services/ParksFinder/MapServer/0/query?where=1%3D1&outFields=OBJECTID%2CPARK_NAME&returnGeometry=true&outSR=4326&resultRecordCount=80&f=geojson`
+  developments:
+    `${API}/167/query?where=1%3D1&outFields=OBJECTID%2CPROJECT_NO%2CDESCRIPTION%2CSTATUS&returnGeometry=true&outSR=4326&resultRecordCount=45&f=geojson`,
+  buildings:
+    `${API}/155/query?where=1%3D1&outFields=OBJECTID%2CNAME%2CFACILITYID%2CLOCATION%2CCIVIC_FACILITY&returnGeometry=true&outSR=4326&resultRecordCount=350&f=geojson`,
+  transit:
+    `${API}/102/query?where=1%3D1&outFields=FACILITYID%2CBUS_STOP_NO%2CLOCATION%2CTRANSIT_ROUTES%2CACCESSIBLE&returnGeometry=true&outSR=4326&resultRecordCount=250&f=geojson`,
+  parks:
+    `https://gisservices.surrey.ca/arcgis/rest/services/ParksFinder/MapServer/0/query?where=1%3D1&outFields=OBJECTID%2CPARK_NAME&returnGeometry=true&outSR=4326&resultRecordCount=80&f=geojson`
 };
 
 window.map=null; let selectedFeature=null;
